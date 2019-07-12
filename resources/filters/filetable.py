@@ -2,10 +2,9 @@
 Panflute filter to parse CSV in fenced YAML code blocks
 
 ```table
----
 caption    : An awesome table
 file       : /path/to/csv/tsv/file
-header     : True
+header     : true
 width      : 1
 total_width: .8
 align      : default
@@ -14,8 +13,6 @@ cols       : 0
 csvargs    :
 	dialect: unix
 	delimiter: "\t"
-	quotechar: null
----
 ```
 """
 

@@ -111,7 +111,6 @@ class Report:
 			toc      = True,
 			output   = self.outfile,
 			_sep     = 'auto',
-			**{ 'toc-depth': 2,
+			**{ 'toc-depth': 3,
 				'self-contained': standalone,
-				'tab-stop': 4,
 				'resource-path': Path(template).parent})
