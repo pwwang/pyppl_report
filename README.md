@@ -72,9 +72,9 @@ csvargs    : # csvargs for `csv.read`
 You may also specify `width` and `align` for individual columns:
 ```yaml
 width:
-	- .1
-	- .2
-	- .1
+  - .1
+  - .2
+  - .1
 ```
 
 ### References

@@ -3,7 +3,7 @@ import re
 from cmdy import pandoc
 from pathlib import Path
 
-RESOURCE_DIR     = Path(__file__).resolve().parent.parent / 'resources'
+RESOURCE_DIR     = Path(__file__).resolve().parent / 'resources'
 DEFAULT_FILTERS  = ['filetable']
 DEFAULT_TEMPLATE = 'bootstrap'
 

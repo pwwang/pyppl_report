@@ -7,6 +7,8 @@ from pyppl.utils import fs, Box
 from pyppl.exception import ProcAttributeError
 from .report import Report
 
+__version__ = '0.0.1'
+
 @hookimpl
 def setup(config):
 	config['report'] = ''
