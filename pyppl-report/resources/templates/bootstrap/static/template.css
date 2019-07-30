@@ -45,7 +45,8 @@ h2[text=Reference] {
 }
 
 h3 {
-	font-size: 1.4rem
+	font-size: 1.4rem;
+	margin-top: .8rem;
 }
 
 h4 {
@@ -54,12 +55,22 @@ h4 {
 
 div.nav-tabs a.nav-item h3,
 div.nav-tabs a.nav-item h4,
+div.nav-tabs a.nav-item h5,
 div.card div.card-header h3 button,
-div.card div.card-header h4 button {
+div.card div.card-header h4 button,
+div.card div.card-header h5 button {
 	font-size: .9rem;
 	font-weight: bold
 }
 
 div.card-header {
 	padding: .25rem
+}
+
+img {
+	max-width: 80%
+}
+
+.page-footer{
+	font-size: .8rem
 }

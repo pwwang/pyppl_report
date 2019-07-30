@@ -49,6 +49,8 @@ def fenced_action(options, data, element, doc):
 	ncols = len(row)
 	if has_header:
 		header = body.pop(0)
+		if body and len(body[0].content) == len(header.content) + 1:
+			header.content.insert(0, pf.TableCell(pf.Plain(pf.Str(''))))
 	elif nrows:
 		body = body[:nrows]
 

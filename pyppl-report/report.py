@@ -97,12 +97,17 @@ class Report:
 						i=index, cite=cite))
 
 	def generate(self, standalone, template, filters):
+		from pyppl import __version__ as pyppl_version
+		from . import __version__ as report_version
 		template = template or DEFAULT_TEMPLATE
 		if template and '/' not in template:
 			template = RESOURCE_DIR / 'templates' / template / 'standalone.html'
 		return pandoc(
 			self.mdfile,
-			metadata = 'pagetitle="%s"' % self.title,
+			metadata = [
+				'pagetitle=%s' % self.title,
+				'pyppl_version=%s' % pyppl_version,
+				'report_version=%s' % report_version],
 			read     = 'markdown',
 			write    = 'html',
 			template = template,
@@ -110,7 +115,10 @@ class Report:
 				for filt in DEFAULT_FILTERS] + (filters or []),
 			toc      = True,
 			output   = self.outfile,
+			_raise   = True,
 			_sep     = 'auto',
+			_dupkey  = True,
+			_hold    = True,
 			**{ 'toc-depth': 3,
 				'self-contained': standalone,
 				'resource-path': Path(template).parent})

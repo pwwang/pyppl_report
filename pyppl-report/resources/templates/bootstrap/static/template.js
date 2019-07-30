@@ -10,7 +10,11 @@ var Tab = function(index, wrap) {
 			tabtitle.replaceWith('')
 		}
 		if (tabtitle.length == 0) {
-			tabtitle = $('<h4>Tab '+ (i+1) +'</h4>')
+			tabtitle = $(this).children('h5:first')
+			tabtitle.replaceWith('')
+		}
+		if (tabtitle.length == 0) {
+			tabtitle = $('<h5>Tab '+ (i+1) +'</h5>')
 		}
 
 		tabid = wrapid + '_' + (i + 1)
@@ -38,7 +42,11 @@ var Collapse = function(index, wrap) {
 			tabtitle.replaceWith('')
 		}
 		if (tabtitle.length == 0) {
-			tabtitle = $('<h4>Tab '+ (i+1) +'</h4>')
+			tabtitle = $(this).children('h5:first')
+			tabtitle.replaceWith('')
+		}
+		if (tabtitle.length == 0) {
+			tabtitle = $('<h5>Tab '+ (i+1) +'</h5>')
 		}
 
 		tabid = wrapid + '_' + (i + 1)
@@ -81,6 +89,30 @@ var TabWrap = function(selector) {
 	$("div.tab-wrapper").each(TabType)
 };
 
+(function() {
+	var ev = new $.Event('display'),
+		orig = $.fn.css;
+	$.fn.css = function() {
+		orig.apply(this, arguments);
+		if ($(this).is('div')) {
+			$(this).trigger(ev);
+		}
+	}
+})();
+
+var adjustImage = function() {
+	$('div.tab :has(img)').on('display', function(){
+		$(this).find('img').each(function(){
+			// squared images, too large
+			if ($(this).height() == $(this).width() && $(this).height() > 200) {
+				$(this).css('max-width', '50%')
+			}
+		})
+	})
+	$('div.tab :has(img)').trigger('display')
+}
+
+
 $(document).ready(function () {
 
 	$("table").addClass("table table-striped table-sm")
@@ -91,5 +123,8 @@ $(document).ready(function () {
 			'href': 'https://scholar.google.com/scholar?q=' + $(this).text()
 		})
 	})
+
 	TabWrap("div.tab")
+
+	adjustImage()
 });
