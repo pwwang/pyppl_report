@@ -53,12 +53,19 @@ h4 {
 	font-size: 1rem
 }
 
+div.card div.card-header h3,
+div.card div.card-header h4,
+div.card div.card-header h5 {
+	margin-top: 0px;
+}
+
 div.nav-tabs a.nav-item h3,
 div.nav-tabs a.nav-item h4,
 div.nav-tabs a.nav-item h5,
 div.card div.card-header h3 button,
 div.card div.card-header h4 button,
 div.card div.card-header h5 button {
+	margin: 2px 4px;
 	font-size: .9rem;
 	font-weight: bold
 }
@@ -73,4 +80,9 @@ img {
 
 .page-footer{
 	font-size: .8rem
+}
+
+div.tab div.tab {
+	margin: 4px;
+	background-color: #EEE;
 }

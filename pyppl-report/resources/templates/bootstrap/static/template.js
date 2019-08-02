@@ -1,7 +1,7 @@
 
 var Tab = function(index, wrap) {
 	wrapid    = 'report_tab_' + (index + 1)
-	tabwrap  = $('<div><nav><div class="nav nav-tabs" id="'+ wrapid +'" role="tablist"></div></nav><div class="tab-content" id="'+ wrapid +'Content"></div></div>')
+	tabwrap  = $('<div class="tabwrap tab"><nav><div class="nav nav-tabs" id="'+ wrapid +'" role="tablist"></div></nav><div class="tab-content" id="'+ wrapid +'Content"></div></div>')
 	$(wrap).children('div.tab').each(function(i) {
 		tabtitle = $(this).children('h3:first')
 		tabtitle.replaceWith('')
@@ -33,7 +33,7 @@ var Tab = function(index, wrap) {
 
 var Collapse = function(index, wrap) {
 	wrapid    = 'report_collapse_' + (index + 1)
-	tabwrap  = $('<div id="'+ wrapid +'"></div>')
+	tabwrap  = $('<div id="'+ wrapid +'" class="collapsewrap tab"></div>')
 	$(wrap).children('div.tab').each(function(i) {
 		tabtitle = $(this).children('h3:first')
 		tabtitle.replaceWith('')
@@ -68,11 +68,11 @@ var Collapse = function(index, wrap) {
 };
 
 var TabType = function(index) {
-	ntabs = $(this).children('div.tab').length;
-	if (ntabs <= 1)
+	tabs = $(this).children('div.tab');
+	if (tabs.length <= 1)
 		return;
 
-	if (ntabs <= 3) {
+	if ((tabs.length <= 3 && !tabs.hasClass('force-collapse')) || tabs.hasClass('force-tab')) {
 		Tab(index, this)
 	} else {
 		Collapse(index, this)
@@ -112,6 +112,18 @@ var adjustImage = function() {
 	$('div.tab :has(img)').trigger('display')
 }
 
+var correctModal = function() {
+	$('.modal div.button').each(function(){
+		$(this).find('p').each(function(){
+			$(this).replaceWith($(this).html())
+		})
+		var outer = this.outerHTML
+		// replace <div and div>
+		outer = '<button' + outer.substring(4, outer.length - 4) + 'button>'
+		$(this).replaceWith(outer)
+	})
+}
+
 
 $(document).ready(function () {
 
@@ -127,4 +139,6 @@ $(document).ready(function () {
 	TabWrap("div.tab")
 
 	adjustImage()
+
+	correctModal()
 });

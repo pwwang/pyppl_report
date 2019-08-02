@@ -4,16 +4,18 @@ from cmdy import pandoc
 from pathlib import Path
 
 RESOURCE_DIR     = Path(__file__).resolve().parent / 'resources'
-DEFAULT_FILTERS  = ['filetable']
+DEFAULT_FILTERS  = ['filetable', 'modal']
 DEFAULT_TEMPLATE = 'bootstrap'
 
 def _replaceAll(regex, callback, string):
-	matches = re.findall(regex, string)
+	matches = re.finditer(regex, string)
+	ret = ''
+	start = 0
 	for match in matches:
-		rep = callback(match)
-		if rep is not None:
-			string = string.replace(match, rep)
-	return string
+		ret += string[start:match.start(0)]
+		start = match.end(0)
+		ret += callback(match.group(), *match.groups())
+	return ret + string[start:]
 
 class ProcReport:
 
@@ -31,7 +33,7 @@ class ProcReport:
 		citations = {}
 		for line in lines:
 			line = line.rstrip('\n')
-			if line.startswith('## Appendix'):
+			if line.startswith('## Appendix'): # appendix has to be on level2 anyway
 				appendix = []
 			else:
 				matched = re.match(r'\[(\d+)\]: (.+)', line)
@@ -47,7 +49,7 @@ class ProcReport:
 		def replace(m):
 			index = m[1:-1]
 			if index not in citations:
-				return None
+				return m
 			return '[#REF: %s #]' % citations[index]
 
 		source = source and '\n'.join(source) or ''
@@ -93,7 +95,7 @@ class Report:
 			if citations:
 				fmd.write('## Reference\n')
 				for cite, index in sorted(citations.items(), key = lambda item: item[1]):
-					fmd.write('<a name="REF_{i}" class="reference">**[{i}]** {cite}</a>'.format(
+					fmd.write('<a name="REF_{i}" class="reference">**[{i}]** {cite}</a>\n\n'.format(
 						i=index, cite=cite))
 
 	def generate(self, standalone, template, filters):
