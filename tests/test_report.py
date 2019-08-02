@@ -343,18 +343,10 @@ def test_modals(proc, reportfile):
 # Title
 Click [here](modal#detailinfo) for details.
 
-```modal
-id: detailinfo
-title: Detailed information
-closebtn: true
-size: large # small, large, xlarge
-```
-
-::: {.modal-proxy id="detailinfoContent"}
+::: {.modal id="detailinfo" title="Detailed information" closebtn="true" size="xlarge"}
 ![](%s)
 :::
-
-''' % (HERE / 'snapshot.png')
+''' % (HERE / 'snapshot.png') # size: default, small, large, xlarge
 	PyPPL().start(proc).run().report(outfile = reportfile)
 	print('CHECK THE REPORT FILE:', reportfile)
 

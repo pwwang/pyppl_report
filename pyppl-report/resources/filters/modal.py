@@ -37,10 +37,7 @@ into:
 import io
 import panflute as pf
 
-CONTENTS = {}
-
 def fenced_action(options, data, element, doc):
-
 	modalid  = options.get('id', 'modal1')
 	title    = options.get('title')
 	closebtn = options.get('closebtn', True)
@@ -68,10 +65,7 @@ def fenced_action(options, data, element, doc):
 				'aria-label': 'Close'
 			})
 		components.append(pf.Div(modal_header1, modal_header2, classes = ['modal-header']))
-	if modalid not in CONTENTS:
-		components.append(pf.Div(pf.Para(pf.Str('')), classes = ['modal-body']))
-	else:
-		components.append(pf.Div(*CONTENTS[modalid], classes = ['modal-body']))
+	components.append(pf.Div(*data, classes = ['modal-body']))
 	if closebtn:
 		components.append(pf.Div(
 			pf.Div(pf.Para(pf.Str('Close')), classes = ['button', 'btn', 'btn-secondary'],
@@ -105,11 +99,8 @@ def action(elem, doc):
 		modalid = 'modal1' if len(modalid) == 1 else modalid[1]
 		elem.attributes['data-toggle'] = 'modal'
 		elem.attributes['data-target'] = '#' + modalid
-	elif isinstance(elem, pf.Div) and 'modal-proxy' in elem.classes:
-		CONTENTS[elem.identifier.replace('Content', '')] = elem.content
-		return []
-	elif type(elem) == pf.CodeBlock:
-		return pf.yaml_filter(elem, doc, tag = 'modal', function = fenced_action)
+	elif isinstance(elem, pf.Div) and 'modal' in elem.classes:
+		return fenced_action(dict(id = elem.identifier, **elem.attributes), elem.content, elem, doc)
 
 def main(doc=None):
 	return pf.run_filter(action, doc=doc)
