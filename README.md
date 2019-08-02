@@ -3,6 +3,7 @@
 A report generating system for [PyPPL][1]
 
 ## Installation
+`pyppl-report` requires `pandoc` to be installed in `$PATH`
 ```shell
 pip install pyppl-report
 ```
@@ -12,7 +13,7 @@ pip install pyppl-report
 
 ````python
 pPyClone.report = """
-## {{proc.desc}}
+## {{title}}
 
 PyClone[1] is a tool using Probabilistic model for inferring clonal population structure from deep NGS sequencing.
 
@@ -37,7 +38,7 @@ pPyClone.report = "file:/path/to/template.md"
 PyPPL().start(pPyClone).run().report('/path/to/report', title = 'Clonality analysis using PyClone')
 ```
 
-![Snapshort](./snapshot.png)
+![Snapshort](./docs/snapshot.png)
 
 ### Extra data for rendering
 You can generate a `YAML` file named `job.report.data.yaml` under `<job.outdir>` with extra data to render the report template. Beyond that, `proc` attributes and `args` can also be used.
@@ -45,11 +46,11 @@ You can generate a `YAML` file named `job.report.data.yaml` under `<job.outdir>`
 For example:
 `job.report.data.yaml`:
 ```yaml
-title: 'A awesome report for job 1'
+description: 'A awesome report for job 1'
 ```
 Then in your template, you can use it:
 ```markdown
-## {{jobs[0].title}}
+## {{jobs[0].description}}
 ```
 
 ### Showing tables with csv/tsv file
@@ -81,4 +82,9 @@ width:
 
 We use `[1]`, `[2]` ... to link to the references, so HTML links have to be in-place (in the format of `[text](link)` instead of `[text][link-index]`). All references from different processes will be re-ordered and combined.
 
+## Advanced usage
+[ReadTheDocs][2]
+
+
 [1]: https://github.com/pwwang/PyPPL
+[2]: https://pyppl-report.readthedocs.io/en/latest/

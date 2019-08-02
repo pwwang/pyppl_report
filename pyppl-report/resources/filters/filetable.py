@@ -33,8 +33,8 @@ def fenced_action(options, data, element, doc):
 	ncols       = options.get('cols', 0)
 	csvargs     = options.get('csvargs', {})
 
-	csvargs['dialect'] = csvargs.get('dialect', "unix")
-	csvargs['delimiter'] = csvargs.get('delimiter', "\t")
+	csvargs['dialect']   = csvargs.get('dialect', "unix")
+	csvargs['delimiter'] = csvargs.get('delimiter', "\t").encode().decode('unicode_escape')
 
 	with open(filepath) as f:
 		reader = csv.reader(f, **csvargs)

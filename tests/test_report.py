@@ -45,7 +45,7 @@ def test_template_rel(proc, reportfile):
 	assertInfile(reportfile, '<h3 id="a-relative-path-template">A relative path template</h3>')
 
 def test_template_extradata(proc, reportfile):
-	proc.input = ['1']
+	proc.input = {'a': ['1']}
 	proc.script = 'echo "mark: special job{{job.index}}" > {{job.outdir}}/job.report.data.yaml'
 	proc.report = '{{jobs[0].mark}}'
 	PyPPL().start(proc).run().report(outfile = reportfile)
@@ -343,10 +343,25 @@ def test_modals(proc, reportfile):
 # Title
 Click [here](modal#detailinfo) for details.
 
+{# size: default, small, large, xlarge #}
 ::: {.modal id="detailinfo" title="Detailed information" closebtn="true" size="xlarge"}
-![](%s)
+```table
+file: %s/filetable.txt
+caption: Sample table
+header: true
+width: 1
+total_width: .8
+align: default
+rows: 10
+cols: 0
+csvargs:
+	dialect: unix
+	#delimiter: "	"
+```
+
+![](%s/snapshot.png)
 :::
-''' % (HERE / 'snapshot.png') # size: default, small, large, xlarge
+''' % (HERE, HERE)
 	PyPPL().start(proc).run().report(outfile = reportfile)
 	print('CHECK THE REPORT FILE:', reportfile)
 
