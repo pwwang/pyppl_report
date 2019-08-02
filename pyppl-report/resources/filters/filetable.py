@@ -16,7 +16,6 @@ csvargs    :
 ```
 """
 
-import io
 import csv
 import panflute as pf
 

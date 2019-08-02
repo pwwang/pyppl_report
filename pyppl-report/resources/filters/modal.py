@@ -34,7 +34,6 @@ into:
 </div>
 """
 
-import io
 import panflute as pf
 
 def fenced_action(options, data, element, doc):
@@ -42,7 +41,6 @@ def fenced_action(options, data, element, doc):
 	title    = options.get('title')
 	closebtn = options.get('closebtn', True)
 	size     = options.get('size', 'default')
-	content  = options.get('content', '')
 	size2class = {
 		'default': None,
 		'small'  : 'modal-sm',
