@@ -1,9 +1,9 @@
 [TAGIT]
 ; The change log file to check when version is mentioned.
-changelog = py:False
+changelog = docs/CHANGELOG.md
 
 ; Whether publish the package after the tag pushed to server.
-publish = py:True
+publish = py:False
 
 ; Whether check the version (__version__) in source file.
 checksource = py:False
@@ -21,5 +21,5 @@ vertoml = ./pyproject.toml
 increment = patch
 
 ; Extra commands to run before tag committed and pushed.
-extra = py:False
+extra = py:''
 
