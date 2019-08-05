@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 import yaml
 from pyppl.plugin import hookimpl, postrun, addmethod
-from pyppl.logger import logger
+from pyppl.logger import logger, THEMES, LEVELS_ALWAYS
 from pyppl.utils import fs, Box
 from pyppl.exception import ProcAttributeError
 from cmdy import CmdyReturnCodeException
@@ -12,6 +12,9 @@ __version__ = "0.0.1"
 
 @hookimpl
 def setup(config):
+	for colors in THEMES.values():
+		colors['REPORT'] = colors['DONE']
+	LEVELS_ALWAYS.add('REPORT')
 	config['report']  = ''
 	config['tplenvs'].update(report = Box(
 		level = 2,
@@ -41,7 +44,6 @@ def procSetAttr(proc, name, value):
 			raise ProcAttributeError(
 				'Report template file does not exist: %s' % scriptpath)
 		proc.config[name] = "file:%s" % scriptpath
-		return True
 
 @hookimpl
 def procGetAttr(proc, name):
