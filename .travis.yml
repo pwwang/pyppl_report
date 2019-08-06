@@ -4,12 +4,10 @@ matrix:
     - python: 3.6
     - python: 3.7
       dist: xenial
-addons:
-  apt:
-    packages:
-      - pandoc
 before_install:
   - pip install poetry
+  - curl -L https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-1-amd64.deb > pandoc.deb # apt doesn't install latest pandoc
+  - sudo dpkg -i pandoc.deb
 install:
   - poetry install -v
   - pip install tox-travis
