@@ -38,7 +38,7 @@ pPyClone.report = "file:/path/to/template.md"
 PyPPL().start(pPyClone).run().report('/path/to/report', title = 'Clonality analysis using PyClone')
 ```
 
-![Snapshort](./docs/snapshot.png)
+![Snapshort](https://pyppl-report.readthedocs.io/en/latest/snapshot.png)
 
 ### Extra data for rendering
 You can generate a `YAML` file named `job.report.data.yaml` under `<job.outdir>` with extra data to render the report template. Beyond that, `proc` attributes and `args` can also be used.
