@@ -1,6 +1,7 @@
 exclude_paths:
   - 'tests/**'
   - 'pyppl-report/resources/**'
+  - '*.md'
 
 engines:
   pylint:
