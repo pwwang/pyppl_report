@@ -1,5 +1,7 @@
 # pyppl-report
 
+[![Pypi][3]][4] [![Github][5]][6] [![PyPPL][7]][1] [![PythonVers][8]][4] [![docs][9]][2] [![Travis building][10]][11] [![Codacy][12]][13] [![Codacy coverage][14]][13]
+
 A report generating system for [PyPPL][1]
 
 ## Installation
@@ -88,3 +90,16 @@ We use `[1]`, `[2]` ... to link to the references, so HTML links have to be in-p
 
 [1]: https://github.com/pwwang/PyPPL
 [2]: https://pyppl-report.readthedocs.io/en/latest/
+[3]: https://img.shields.io/pypi/v/pyppl-report?style=flat-square
+[4]: https://pypi.org/project/pyppl-report/
+[5]: https://img.shields.io/github/tag/pwwang/pyppl-report?style=flat-square
+[6]: https://github.com/pwwang/pyppl-report
+[7]: https://img.shields.io/github/tag/pwwang/pyppl?label=PyPPL&style=flat-square
+[8]: https://img.shields.io/pypi/pyversions/pyppl-report?style=flat-square
+[9]: https://img.shields.io/readthedocs/pyppl-report.svg?style=flat-square
+[10]: https://img.shields.io/travis/pwwang/pyppl-report?style=flat-square
+[11]: https://travis-ci.org/pwwang/pyppl-report
+[12]: https://img.shields.io/codacy/grade/d11ed42fad49405abee3a8b695420709?style=flat-square
+[13]: https://app.codacy.com/project/pwwang/pyppl-report/dashboard
+[14]: https://img.shields.io/codacy/coverage/d11ed42fad49405abee3a8b695420709?style=flat-square
+
