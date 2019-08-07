@@ -13,9 +13,13 @@ cols       : 0
 csvargs    :
 	dialect: unix
 	delimiter: "\t"
+datatable: # false to disable
+	"page-length": 10
+	"search": true
 ```
 """
 
+import json
 import csv
 import panflute as pf
 
@@ -31,6 +35,7 @@ def fenced_action(options, data, element, doc):
 	nrows       = options.get('rows', 0)
 	ncols       = options.get('cols', 0)
 	csvargs     = options.get('csvargs', {})
+	dtargs      = options.get('dtargs', {})
 
 	csvargs['dialect']   = csvargs.get('dialect', "unix")
 	csvargs['delimiter'] = csvargs.get('delimiter', "\t").encode().decode('unicode_escape')
@@ -69,7 +74,12 @@ def fenced_action(options, data, element, doc):
 
 	table = pf.Table(*body,
 		header=header, caption=caption, width=width, alignment = align)
-	return pf.Div(table, classes = ['table-responsive'])
+	if dtargs is False:
+		return pf.Div(table, classes = ['tablewrapper'])
+	else:
+		return pf.Div(table, classes = ['tablewrapper', 'datatablewrapper'], attributes = {
+			'data-datatable': json.dumps(dtargs)
+		})
 
 def main(doc=None):
 	return pf.run_filter(pf.yaml_filter, tag='table', function=fenced_action, doc=doc)
