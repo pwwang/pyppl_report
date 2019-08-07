@@ -1,3 +1,6 @@
+## 0.1.1
+- Add jquery.datatables
+
 ## 0.1.0
 - Add more HTML components
 - Fix bugs
