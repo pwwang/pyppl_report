@@ -16,7 +16,7 @@ def setup(config):
 		colors['REPORT'] = colors['DONE']
 	LEVELS_ALWAYS.add('REPORT')
 	config['report']  = ''
-	config['tplenvs'].update(report = Box(
+	config['envs'].update(report = Box(
 		level = 2,
 		pre   = '',
 		post  = '',
@@ -69,7 +69,7 @@ def procPostRun(proc):
 		logger.debug("Using report template: %s", tplfile, proc = proc.id)
 		report = tplfile.read_text()
 
-	report  = proc.template(report, **proc.tplenvs)
+	report  = proc.template(report, **proc.envs)
 	rptdata = Box(jobs = [], **proc.procvars)
 	for job in proc.jobs:
 		jobdata  = job.data
@@ -86,7 +86,7 @@ def procPostRun(proc):
 		pre   = '',
 		post  = '',
 		title = proc.desc)
-	rptenvs.update(proc.tplenvs.get('report', {}))
+	rptenvs.update(proc.envs.get('report', {}))
 	rptdata.title = rptenvs.title
 	reportmd = report.render(rptdata).splitlines()
 
@@ -105,9 +105,9 @@ def procPostRun(proc):
 			codeblock = len(line) - len(line.lstrip('`'))
 
 	proc.report.write_text(
-		proc.template(rptenvs.pre, **proc.tplenvs).render(rptdata) + '\n\n' +
+		proc.template(rptenvs.pre, **proc.envs).render(rptdata) + '\n\n' +
 		'\n'.join(reportmd) + '\n\n' +
-		proc.template(rptenvs.post, **proc.tplenvs).render(rptdata) + '\n'
+		proc.template(rptenvs.post, **proc.envs).render(rptdata) + '\n'
 	)
 
 @postrun
