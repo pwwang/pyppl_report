@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "pyppl-report"
-version = "0.1.0"
+version = "0.1.1"
 description = "A report generating system for PyPPL"
 authors = [ "pwwang <pwwang@pwwang.com>",]
 license = "MIT"

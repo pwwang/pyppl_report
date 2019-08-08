@@ -86,3 +86,12 @@ div.tab div.tab {
 	margin: 4px;
 	background-color: #EEE;
 }
+
+.dataTables_filter label {
+	margin-bottom: 0px;
+}
+.dataTables_wrapper label,
+.dataTables_wrapper li.paginate_button,
+.dataTables_wrapper div.dataTables_info {
+	font-size: .9rem;
+}

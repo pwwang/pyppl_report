@@ -77,7 +77,7 @@ var TabType = function(index) {
 	} else {
 		Collapse(index, this)
 	}
-}
+};
 
 var TabWrap = function(selector) {
 	wraps = $(selector + ':first-of-type')
@@ -89,17 +89,6 @@ var TabWrap = function(selector) {
 	$("div.tab-wrapper").each(TabType)
 };
 
-(function() {
-	var ev = new $.Event('display'),
-		orig = $.fn.css;
-	$.fn.css = function() {
-		orig.apply(this, arguments);
-		if ($(this).is('div')) {
-			$(this).trigger(ev);
-		}
-	}
-})();
-
 var adjustImage = function() {
 	$('div.tab :has(img)').on('display', function(){
 		$(this).find('img').each(function(){
@@ -110,7 +99,7 @@ var adjustImage = function() {
 		})
 	})
 	$('div.tab :has(img)').trigger('display')
-}
+};
 
 var correctModal = function() {
 	$('.modal div.button').each(function(){
@@ -122,13 +111,46 @@ var correctModal = function() {
 		outer = '<button' + outer.substring(4, outer.length - 4) + 'button>'
 		$(this).replaceWith(outer)
 	})
-}
+};
 
+var createDataTables = function(){
+	$.extend(true, $.fn.dataTable.defaults, {
+		"searching": true,
+		"ordering" : true,
+		"pageLength": 25,
+		"dom": " <'row'<'col-4 text-left'B><'col-4'f><'col-4 text-right'l>>" +
+				"<'row'<'col-12'tr>>" +
+				"<'row'<'col-6'i><'col-6'p>>",
+		"buttons": [ 'copy', 'csv', 'excel', 'print'],
+		"colReorder": true
+	});
+	$('table > caption').each(function(i){
+		$(this).html('<strong>Table ' + (i+1) + '.</strong> ' + $(this).html())
+	})
+	$('.tablewrapper > table').addClass("table table-sm table-striped table-bordered")
+	$('.datatablewrapper').each(function(){
+		table = $(this).find('table.table')
+		$(this).attr('style', table.attr('style'))
+		table.removeAttr('style')
+		config = JSON.parse($(this).attr('data-datatable'))
+		table.addClass('dataTable').dataTable(config)
+	})
+	$('div.dt-buttons').addClass('btn-group-sm')
+};
+
+(function() {
+	var ev = new $.Event('display'),
+		orig = $.fn.css;
+	$.fn.css = function() {
+		ret = orig.apply(this, arguments);
+		if ($(this).is('div')) {
+			$(this).trigger(ev);
+		}
+		return ret; // keep chaining
+	}
+})();
 
 $(document).ready(function () {
-
-	$("table").addClass("table table-striped table-sm")
-
 	$("a.reference[name^=REF_]").each(function() {
 		$(this).attr({
 			'target': 'blank',
@@ -141,4 +163,6 @@ $(document).ready(function () {
 	adjustImage()
 
 	correctModal()
+
+	createDataTables()
 });

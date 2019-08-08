@@ -172,7 +172,6 @@ content{{i}}
 {% endfor %}
 '''
 	PyPPL().start(proc).run().report(outfile = reportfile)
-	print('CHECK THE REPORT FILE:', reportfile)
 
 def test_collapse(proc, reportfile):
 	proc.report = '''
@@ -185,7 +184,6 @@ content{{i}}
 {% endfor %}
 '''
 	PyPPL().start(proc).run().report(outfile = reportfile)
-	print('CHECK THE REPORT FILE:', reportfile)
 
 def test_tabs_in_tabs(proc, reportfile):
 	proc.report = '''
@@ -210,7 +208,6 @@ content2_{{i}}
 {% endfor %}
 '''
 	PyPPL().start(proc).run().report(outfile = reportfile)
-	print('CHECK THE REPORT FILE:', reportfile)
 
 def test_collapses_in_tabs(proc, reportfile):
 	proc.report = '''
@@ -247,7 +244,6 @@ content4_{{i}}
 {% endfor %}
 '''
 	PyPPL().start(proc).run().report(outfile = reportfile)
-	print('CHECK THE REPORT FILE:', reportfile)
 
 def test_tabs_in_collapses(proc, reportfile):
 	proc.report = '''
@@ -272,7 +268,6 @@ content2_{{i}}
 {% endfor %}
 '''
 	PyPPL().start(proc).run().report(outfile = reportfile)
-	print('CHECK THE REPORT FILE:', reportfile)
 
 def test_collapses_in_collapses(proc, reportfile):
 	proc.report = '''
@@ -309,7 +304,6 @@ content4_{{i}}
 {% endfor %}
 '''
 	PyPPL().start(proc).run().report(outfile = reportfile)
-	print('CHECK THE REPORT FILE:', reportfile)
 
 def test_force_collapses(proc, reportfile):
 	proc.report = '''
@@ -322,7 +316,23 @@ content{{i}}
 {% endfor %}
 '''
 	PyPPL().start(proc).run().report(outfile = reportfile)
-	print('CHECK THE REPORT FILE:', reportfile)
+
+def test_filetable(proc, reportfile):
+	proc.report = '''
+```table
+file: %s/filetable.txt
+caption: Sample table
+header: true
+width: 1
+total_width: .8
+align: default
+rows: 0
+cols: 0
+datatable:
+	page-length: 5
+```
+''' % HERE
+	PyPPL().start(proc).run().report(outfile = reportfile)
 
 def test_force_tabs(proc, reportfile):
 	proc.report = '''
@@ -335,8 +345,6 @@ content{{i}}
 {% endfor %}
 '''
 	PyPPL().start(proc).run().report(outfile = reportfile)
-	print('CHECK THE REPORT FILE:', reportfile)
-
 
 def test_modals(proc, reportfile):
 	proc.report = '''
@@ -363,6 +371,5 @@ csvargs:
 :::
 ''' % (HERE, HERE)
 	PyPPL().start(proc).run().report(outfile = reportfile)
-	print('CHECK THE REPORT FILE:', reportfile)
 
 
