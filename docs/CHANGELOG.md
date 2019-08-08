@@ -1,3 +1,6 @@
+## 0.1.2
+- Drop proc.tplenvs, use drop.envs instead
+
 ## 0.1.1
 - Add jquery.datatables
 
