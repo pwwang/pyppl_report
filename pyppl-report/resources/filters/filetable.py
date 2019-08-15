@@ -18,7 +18,7 @@ datatable: # false to disable
 	"search": true
 ```
 """
-
+import io
 import json
 import csv
 import panflute as pf
@@ -27,7 +27,7 @@ def fenced_action(options, data, element, doc):
 	# We'll only run this for CodeBlock elements of class 'table'
 	caption     = options.get('caption', 'Untitled Table')
 	caption     = [pf.Str(caption)]
-	filepath    = options['file']
+	filepath    = options.get('file')
 	has_header  = options.get('header', True)
 	width       = options.get('width', 1)
 	total_width = float(options.get('total_width', .8))
@@ -40,7 +40,8 @@ def fenced_action(options, data, element, doc):
 	csvargs['dialect']   = csvargs.get('dialect', "unix")
 	csvargs['delimiter'] = csvargs.get('delimiter', "\t").encode().decode('unicode_escape')
 
-	with open(filepath) as f:
+	f = io.StringIO(data) if data else open(filepath)
+	try:
 		reader = csv.reader(f, **csvargs)
 		body = []
 		for i, row in enumerate(reader):
@@ -49,6 +50,8 @@ def fenced_action(options, data, element, doc):
 			cells = [pf.TableCell(pf.Plain(pf.Str(x)))
 				for k, x in enumerate(row) if not ncols or k < ncols]
 			body.append(pf.TableRow(*cells))
+	finally:
+		f.close()
 
 	ncols = len(row)
 	if has_header:
