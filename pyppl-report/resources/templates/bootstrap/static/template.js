@@ -90,15 +90,23 @@ var TabWrap = function(selector) {
 };
 
 var adjustImage = function() {
-	$('div.tab :has(img)').on('display', function(){
-		$(this).find('img').each(function(){
-			// squared images, too large
-			if ($(this).height() == $(this).width() && $(this).height() > 200) {
-				$(this).css('max-width', '50%')
+	$('div.tab :has(img[alt])').on('display', function(){
+		$(this).find('img[alt]').each(function(){
+			// about squared images, too large
+			imgh = $(this).width()
+			imgw = $(this).height()
+			
+			if (Math.abs(imgh-imgw)/Math.min(imgh, imgw) < .2 && imgw > 400) {
+				$(this).css('max-width', '60%')
 			}
 		})
 	})
-	$('div.tab :has(img)').trigger('display')
+
+	// add legend
+	$('div.tab img[alt]').each(function(i) {
+		$(this).after('<figcaption><strong>Figure '+ (i+1) +'.</strong> '+ $(this).attr('alt') +'</figcaption>');
+	})
+	$('div.tab :has(img[alt])').trigger('display')
 };
 
 var correctModal = function() {
@@ -115,6 +123,7 @@ var correctModal = function() {
 
 var createDataTables = function(){
 	$.extend(true, $.fn.dataTable.defaults, {
+		"scrollX": true,
 		"searching": true,
 		"ordering" : true,
 		"pageLength": 25,

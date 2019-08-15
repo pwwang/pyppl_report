@@ -1,6 +1,8 @@
 
 table caption {
 	caption-side: top;
+	padding-top: 0rem !important;
+	padding-bottom: .5rem;
 }
 
 nav[data-toggle="toc"] {
@@ -94,4 +96,7 @@ div.tab div.tab {
 .dataTables_wrapper li.paginate_button,
 .dataTables_wrapper div.dataTables_info {
 	font-size: .9rem;
+}
+.table.dataTable {
+	margin-top: 0px !important
 }
