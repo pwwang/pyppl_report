@@ -8,7 +8,7 @@ from pyppl.exception import ProcAttributeError
 from cmdy import CmdyReturnCodeException
 from .report import Report
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 @hookimpl
 def setup(config):
