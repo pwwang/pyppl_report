@@ -1,3 +1,6 @@
+## 0.1.3
+- Allow data in table fenced block
+
 ## 0.1.2
 - Drop proc.tplenvs, use drop.envs instead
 
