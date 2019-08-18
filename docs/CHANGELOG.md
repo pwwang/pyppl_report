@@ -1,3 +1,7 @@
+## 0.1.4
+- Add image preview for theme bootstrap
+- Format numbers for filetable filter
+
 ## 0.1.3
 - Allow data in table fenced block
 
