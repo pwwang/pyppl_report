@@ -23,6 +23,17 @@ import json
 import csv
 import panflute as pf
 
+def formatNumber(number):
+	if len(number) < 10 or number.isdigit():
+		return number
+	try:
+		number = float(number)
+		if number > 0 and number < .001:
+			return '%.3E' % number
+		return '%.3f' % number
+	except (ValueError, TypeError):
+		return number
+
 def fenced_action(options, data, element, doc):
 	# We'll only run this for CodeBlock elements of class 'table'
 	caption     = options.get('caption', 'Untitled Table')
@@ -47,7 +58,7 @@ def fenced_action(options, data, element, doc):
 		for i, row in enumerate(reader):
 			if nrows and i > nrows + 1:
 				continue
-			cells = [pf.TableCell(pf.Plain(pf.Str(x)))
+			cells = [pf.TableCell(pf.Plain(pf.Str(formatNumber(x))))
 				for k, x in enumerate(row) if not ncols or k < ncols]
 			body.append(pf.TableRow(*cells))
 	finally:

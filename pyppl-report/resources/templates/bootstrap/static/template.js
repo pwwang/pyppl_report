@@ -80,8 +80,10 @@ var TabType = function(index) {
 };
 
 var TabWrap = function(selector) {
-	wraps = $(selector + ':first-of-type')
+	//wraps = $(selector + ':first-of-type')
+	wraps = $(':not('+ selector +') + '+ selector +', '+ selector +':first-child')
 	wraps.each(function(){
+		console.log($(this))
 		$(this).nextUntil(':not('+ selector +')').
 			addBack().
 			wrapAll('<div class="tab-wrapper" />')
@@ -90,6 +92,60 @@ var TabWrap = function(selector) {
 };
 
 var adjustImage = function() {
+	$('body').append('<div class="modal fade" id="figurePreviewer-modal" tabindex="-1" role="dialog" aria-labelledby="figurePreviewer" aria-hidden="true"> \
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl"> \
+		<div class="modal-content"> \
+			<div class="modal-header"> \
+			<h5 class="modal-title" id="figurePreviewer">Figure Preview</h5> \
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button> \
+			</div> \
+			<div class="modal-body"> \
+			<img src="" id="figurePreviewer-image" style="width:100%"> \
+			<figcaption id="figurePreviewer-caption"></figcaption> \
+			</div> \
+			<div class="modal-footer"> \
+			<button type="button" class="btn btn-info" id="figurePreviewer-prev">&lt;</button> \
+			<button type="button" class="btn btn-info" id="figurePreviewer-next">&gt;</button> \
+			<button type="button" class="btn btn-primary" id="figurePreviewer-open">Open in new window</button> \
+			<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> \
+			</div> \
+		</div> \
+		</div> \
+	</div>')
+	image_selector = 'div.tab img[alt]'
+
+	var previewImage = function(selector, i) {
+		$img = $(selector).eq(i)
+		if (i == 0) {
+			$("#figurePreviewer-prev").attr('disabled', true);
+		} else {
+			$("#figurePreviewer-prev").removeAttr('disabled');
+		}
+		if (i == $(selector).length - 1) {
+			$("#figurePreviewer-next").attr('disabled', true);
+		} else {
+			$("#figurePreviewer-next").removeAttr('disabled');
+		}
+
+		$('#figurePreviewer-image').attr('src', $img.attr('src')).data('imgindex', i); 
+		$('#figurePreviewer-caption').html($img.next().html())
+		$('#figurePreviewer-modal').modal('show');
+	};
+
+	$('#figurePreviewer-open').click(function(){
+		doc = window.open('', '_blank').document;
+		doc.write($("#figurePreviewer-image").parent().html());
+		doc.title = $('#figurePreviewer-caption').text();
+	});
+
+	$('#figurePreviewer-prev').click(function(){
+		previewImage(image_selector, $('#figurePreviewer-image').data('imgindex') - 1)
+	});
+
+	$('#figurePreviewer-next').click(function(){
+		previewImage(image_selector, $('#figurePreviewer-image').data('imgindex') + 1)
+	});
+
 	$('div.tab :has(img[alt])').on('display', function(){
 		$(this).find('img[alt]').each(function(){
 			// about squared images, too large
@@ -103,9 +159,15 @@ var adjustImage = function() {
 	})
 
 	// add legend
-	$('div.tab img[alt]').each(function(i) {
-		$(this).after('<figcaption><strong>Figure '+ (i+1) +'.</strong> '+ $(this).attr('alt') +'</figcaption>');
+	$(image_selector).each(function(i) {
+		if ($(this).next().is('figcaption')) {
+			$(this).next().html('<strong>Figure '+ (i+1) +'.</strong> ' + $(this).next().html());
+		} else {
+			$(this).after('<figcaption><strong>Figure '+ (i+1) +'.</strong> '+ $(this).attr('alt') +'</figcaption>');
+		}
+		$(this).on('click', function() {previewImage(image_selector, i)});
 	})
+	
 	$('div.tab :has(img[alt])').trigger('display')
 };
 
@@ -123,7 +185,6 @@ var correctModal = function() {
 
 var createDataTables = function(){
 	$.extend(true, $.fn.dataTable.defaults, {
-		"scrollX": true,
 		"searching": true,
 		"ordering" : true,
 		"pageLength": 25,
@@ -164,7 +225,7 @@ $(document).ready(function () {
 		$(this).attr({
 			'target': 'blank',
 			'href': 'https://scholar.google.com/scholar?q=' + $(this).text()
-		})
+		}).parent('p').css({'margin-top': '0rem', 'margin-bottom': '0rem'})
 	})
 
 	TabWrap("div.tab")

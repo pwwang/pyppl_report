@@ -5,6 +5,10 @@ table caption {
 	padding-bottom: .5rem;
 }
 
+img[alt] {
+	cursor: zoom-in
+}
+
 nav[data-toggle="toc"] {
 	top: 32px;
 }
@@ -39,7 +43,7 @@ h1 {
 
 h2 {
 	font-size: 1.8rem;
-	margin: 12px 0px;
+	margin: 30px 0px 12px 0px;
 }
 
 h2[text=Reference] {
@@ -92,11 +96,21 @@ div.tab div.tab {
 .dataTables_filter label {
 	margin-bottom: 0px;
 }
+.dataTables_wrapper {
+	margin-top: 25px;
+}
 .dataTables_wrapper label,
 .dataTables_wrapper li.paginate_button,
 .dataTables_wrapper div.dataTables_info {
 	font-size: .9rem;
 }
+.dataTables_wrapper > div.row {
+	overflow-x: auto;
+}
 .table.dataTable {
 	margin-top: 0px !important
+}
+figcaption {
+	padding-left: 12px;
+	padding-bottom: 20px;
 }
