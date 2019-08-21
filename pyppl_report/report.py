@@ -105,55 +105,41 @@ class Report:
 	def generate(self, standalone, template, filters):
 		from pyppl import __version__ as pyppl_version
 		from . import __version__ as report_version
+		
 		template = template or DEFAULT_TEMPLATE
 		if template and '/' not in template:
-			template = RESOURCE_DIR / 'templates' / template / 'standalone.html'
-		write = None
+			template = RESOURCE_DIR / 'templates' / template / 'template.html'
+
 		ext   = self.outfile.suffix.lower()
-		if 'htm' in ext or 'pdf' in ext:
-			write = 'html5'
-		else:
+		if 'htm' not in ext and 'pdf' not in ext:
 			raise ValueError('Only html and pdf format supported currently.')
 
+		args = (self.mdfile, )
+		kwargs = {
+			'metadata': [
+				'pagetitle=%s' % self.title,
+				'pyppl_version=%s' % pyppl_version,
+				'report_version=%s' % report_version,
+				'pdf=%s' % bool('pdf' in ext)],
+			'read'    : 'markdown',
+			'write'   : 'html5',
+			'template': template,
+			'filter'  : [	RESOURCE_DIR / 'filters' / (filt + '.py')
+							for filt in DEFAULT_FILTERS 
+							if filt != 'modal' or 'pdf' not in ext # pdf doesn't do modal
+						] + (filters or []),
+			'toc'           : True,
+			'toc-depth'     : 3,
+			'self-contained': standalone,
+			'resource-path' : self.srcpath + ':' + str(Path(template).parent),
+			'_raise'        : True,
+			'_sep'          : 'auto',
+			'_dupkey'       : True,
+		}
 		if 'pdf' not in ext:
-			return pandoc(
-				self.mdfile,
-				metadata = [
-					'pagetitle=%s' % self.title,
-					'pyppl_version=%s' % pyppl_version,
-					'report_version=%s' % report_version],
-				read     = 'markdown',
-				write    = write,
-				template = template,
-				filter   = [RESOURCE_DIR / 'filters' / (filt + '.py')
-					for filt in DEFAULT_FILTERS] + (filters or []),
-				toc      = True,
-				output   = self.outfile,
-				_raise   = True,
-				_sep     = 'auto',
-				_dupkey  = True,
-				_hold    = True,
-				**{ 'toc-depth': 3,
-					'self-contained': standalone,
-					'resource-path': self.srcpath + ':' + str(Path(template).parent)})
+			kwargs['output'] = self.outfile
+			kwargs['_hold'] = True
+			return pandoc(*args, **kwargs)
 		else:
-			return pandoc(
-				self.mdfile,
-				metadata = [
-					'pagetitle=%s' % self.title,
-					'pyppl_version=%s' % pyppl_version,
-					'report_version=%s' % report_version],
-				read     = 'markdown',
-				write    = write,
-				template = template,
-				filter   = [RESOURCE_DIR / 'filters' / (filt + '.py')
-					for filt in DEFAULT_FILTERS if filt != 'modal'] + (filters or []),
-				toc      = True,
-				_pipe    = True,
-				_raise   = True,
-				_sep     = 'auto',
-				_dupkey  = True,
-				**{ 'toc-depth': 3,
-					'self-contained': standalone,
-					'resource-path': self.srcpath + ':' + str(Path(template).parent)}
-				) | wkhtmltopdf('-', _ = self.outfile, _raise = True, _hold = True)
+			kwargs['_pipe'] = True
+			return pandoc(*args, **kwargs) | wkhtmltopdf('-', _ = self.outfile, _raise = True, _hold = True)

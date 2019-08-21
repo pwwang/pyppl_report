@@ -1,4 +1,4 @@
-# pyppl-report
+# pyppl_report
 
 [![Pypi][3]][4] [![Github][5]][6] [![PyPPL][7]][1] [![PythonVers][8]][4] [![docs][9]][2] [![Travis building][10]][11] [![Codacy][12]][13] [![Codacy coverage][14]][13]
 
@@ -7,10 +7,10 @@ A report generating system for [PyPPL][1]
 ## Installation
 Requires pandoc 2.7+ (and wkhtmltopdf 0.12.4+ when creating PDF reports)
 
-`pyppl-report` requires `pandoc/wkhtmltopdf` to be installed in `$PATH`
+`pyppl_report` requires `pandoc/wkhtmltopdf` to be installed in `$PATH`
 
 ```shell
-pip install pyppl-report
+pip install pyppl_report
 ```
 
 ## Usage
@@ -43,7 +43,7 @@ pPyClone.report = "file:/path/to/template.md"
 PyPPL().start(pPyClone).run().report('/path/to/report', title = 'Clonality analysis using PyClone')
 ```
 
-![Snapshort](https://pyppl-report.readthedocs.io/en/latest/snapshot.png)
+![Snapshort](https://pyppl_report.readthedocs.io/en/latest/snapshot.png)
 
 ### Extra data for rendering
 You can generate a `YAML` file named `job.report.data.yaml` under `<job.outdir>` with extra data to render the report template. Beyond that, `proc` attributes and `args` can also be used.
@@ -92,17 +92,17 @@ We use `[1]`, `[2]` ... to link to the references, so HTML links have to be in-p
 
 
 [1]: https://github.com/pwwang/PyPPL
-[2]: https://pyppl-report.readthedocs.io/en/latest/
-[3]: https://img.shields.io/pypi/v/pyppl-report?style=flat-square
-[4]: https://pypi.org/project/pyppl-report/
-[5]: https://img.shields.io/github/tag/pwwang/pyppl-report?style=flat-square
-[6]: https://github.com/pwwang/pyppl-report
+[2]: https://pyppl_report.readthedocs.io/en/latest/
+[3]: https://img.shields.io/pypi/v/pyppl_report?style=flat-square
+[4]: https://pypi.org/project/pyppl_report/
+[5]: https://img.shields.io/github/tag/pwwang/pyppl_report?style=flat-square
+[6]: https://github.com/pwwang/pyppl_report
 [7]: https://img.shields.io/github/tag/pwwang/pyppl?label=PyPPL&style=flat-square
-[8]: https://img.shields.io/pypi/pyversions/pyppl-report?style=flat-square
-[9]: https://img.shields.io/readthedocs/pyppl-report.svg?style=flat-square
-[10]: https://img.shields.io/travis/pwwang/pyppl-report?style=flat-square
-[11]: https://travis-ci.org/pwwang/pyppl-report
+[8]: https://img.shields.io/pypi/pyversions/pyppl_report?style=flat-square
+[9]: https://img.shields.io/readthedocs/pyppl_report.svg?style=flat-square
+[10]: https://img.shields.io/travis/pwwang/pyppl_report?style=flat-square
+[11]: https://travis-ci.org/pwwang/pyppl_report
 [12]: https://img.shields.io/codacy/grade/d11ed42fad49405abee3a8b695420709?style=flat-square
-[13]: https://app.codacy.com/project/pwwang/pyppl-report/dashboard
+[13]: https://app.codacy.com/project/pwwang/pyppl_report/dashboard
 [14]: https://img.shields.io/codacy/coverage/d11ed42fad49405abee3a8b695420709?style=flat-square
 

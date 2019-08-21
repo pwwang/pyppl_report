@@ -1,9 +1,10 @@
 import sys
+from time import time
 from pathlib import Path
 import yaml
 from pyppl.plugin import hookimpl, postrun, addmethod
 from pyppl.logger import logger, THEMES, LEVELS_ALWAYS
-from pyppl.utils import fs, Box
+from pyppl.utils import fs, Box, formatSecs
 from pyppl.exception import ProcAttributeError
 from cmdy import CmdyReturnCodeException
 from .report import Report
@@ -29,7 +30,7 @@ def procSetAttr(proc, name, value):
 		if not scriptpath.is_absolute():
 			from inspect import getframeinfo, stack
 
-			# 0: .../pyppl-report/pyppl-report/__init__.py
+			# 0: .../pyppl_report/pyppl_report/__init__.py
 			# 1: .../pluggy/callers.py
 			# 2: .../pluggy/manager.py
 			# 3: .../pluggy/manager.py
@@ -125,6 +126,7 @@ def pyppl_report(ppl, outfile = None,
 	@returns:
 		(PyPPL): The pipeline object itppl.
 	"""
+	timer = time()
 	outfile = outfile or (Path('.') / Path(sys.argv[0]).stem).with_suffix(
 		'%s.report.html' % ('.' + str(ppl.counter) if ppl.counter else ''))
 	logger.report('Generating report using pandoc ...')
@@ -133,7 +135,7 @@ def pyppl_report(ppl, outfile = None,
 	try:
 		logger.debug('Running: ' + cmd.cmd)
 		cmd.run()
-		logger.report('Report generated: ' + str(outfile))
+		logger.report('Time elapsed: %s, report generated: %s' % (formatSecs(time() - timer), str(outfile)))
 	except CmdyReturnCodeException as ex:
 		logger.error(str(ex))
 		sys.exit(1)

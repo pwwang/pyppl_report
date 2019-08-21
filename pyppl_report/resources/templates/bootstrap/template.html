@@ -22,6 +22,13 @@ $if(date-meta)$
 $endif$
 
   <title>$if(title-prefix)$$title-prefix$ - $endif$$pagetitle$</title>
+$if(pdf)$
+  <style type="text/css">
+    thead { display: table-header-group; }
+    tfoot { display: table-row-group; }
+    tr { page-break-inside: avoid; }
+  </style>
+$endif$
   <style type="text/css">code{white-space: pre;}</style>
 
 $if(quotes)$
@@ -47,7 +54,10 @@ $for(header-includes)$
 $endfor$
 </head>
 <body data-spy="scroll" data-target="#toc">
-
+  $if(pdf)$
+  $else$
+  <div id="loadingMask"><span id="loadingMask-text">LOADING ... </span><div id="loadingMask-spinner"></div></div>
+  $endif$
   <div class="container-fluid">
     <div class="row">
       $if(toc)$
@@ -71,8 +81,13 @@ $endfor$
 
         <div class="page-footer">
           <div class="text-sm-right font-weight-lighter font-italic py-1">
+            $if(pdf)$
+            Powered
+            $else$
             Best experience with <a target="_blank" href="https://www.google.com/chrome/">Chrome</a>,
-            powered by <a target="_blank" href="https://github.com/pwwang/PyPPL">PyPPL</a> v$pyppl_version$ with <a target="_blank" href="https://github.com/pwwang/pyppl-report">pyppl-report</a> v$report_version$
+            powered
+            $endif$
+            by <a target="_blank" href="https://github.com/pwwang/PyPPL">PyPPL</a> v$pyppl_version$ with <a target="_blank" href="https://github.com/pwwang/pyppl-report">pyppl-report</a> v$report_version$
           </div>
         </div>
 
@@ -80,11 +95,14 @@ $endfor$
     </div>
 
   </div>
+  $if(pdf)$
+  $else$
   <script src="static/jquery-3.4.1.min.js"></script>
   <script src="static/popper.min.js"></script>
   <script src="static/bootstrap.min.js"></script>
   <script src="static/bootstrap-toc.min.js"></script>
   <script src="static/datatables.min.js"></script>
   <script src="static/template.js"></script>
+  $endif$
 </body>
 </html>

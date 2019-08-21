@@ -1,5 +1,5 @@
 ## 0.1.5
-- Add `pyppl-report` command to convert external markdown files as well
+- Add `pyppl_report` command to convert external markdown files as well
 - Suport PDF output: #1
 
 ## 0.1.4

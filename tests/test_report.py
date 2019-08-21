@@ -11,7 +11,7 @@ def proc():
 
 @pytest.fixture
 def reportfile(tmp_path):
-	return tmp_path / 'pyppl-report-test.report.html'
+	return tmp_path / 'pyppl_report-test.report.html'
 
 def assertInfile(file, *strings):
 	content = file.read_text()
@@ -28,7 +28,7 @@ def test_title(proc, reportfile):
 	assertInfile(reportfile, 'Test title')
 
 def test_template_abs(proc, reportfile, tmp_path):
-	tplfile = tmp_path / 'pyppl-report-test-template.md'
+	tplfile = tmp_path / 'pyppl_report-test-template.md'
 	tplfile.write_text('# Hello world')
 	proc.report = 'file:%s' % tplfile
 	PyPPL().start(proc).run().report(outfile = reportfile)
@@ -149,7 +149,7 @@ Some repeated results[2]
 ## Test report.py
 @pytest.fixture
 def report():
-	module = __import__('pyppl-report', fromlist = ['report'])
+	module = __import__('pyppl_report', fromlist = ['report'])
 	return module.report
 
 @pytest.mark.parametrize('regex,callback,string,expect', [

@@ -3,18 +3,18 @@ requires = [ "poetry>=0.12",]
 build-backend = "poetry.masonry.api"
 
 [tool.poetry]
-name = "pyppl-report"
+name = "pyppl_report"
 version = "0.1.5"
 description = "A report generating system for PyPPL"
 authors = [ "pwwang <pwwang@pwwang.com>",]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/pwwang/pyppl-report"
-repository = "https://github.com/pwwang/pyppl-report"
-include = [ "pyppl-report/resources/",]
-exclude = [ "pyppl-report/resources/**.pyc",]
+homepage = "https://github.com/pwwang/pyppl_report"
+repository = "https://github.com/pwwang/pyppl_report"
+include = [ "pyppl_report/resources/",]
+exclude = [ "pyppl_report/resources/**.pyc",]
 [[tool.poetry.packages]]
-include = "pyppl-report"
+include = "pyppl_report"
 
 [tool.poetry.dependencies]
 python = "^3.6"
@@ -29,4 +29,4 @@ pytest = "*"
 pytest-cov = "*"
 
 [tool.poetry.scripts]
-pyppl-report = "pyppl_report.console:main"
+pyppl_report = "pyppl_report.console:main"

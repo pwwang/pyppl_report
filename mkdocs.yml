@@ -1,4 +1,4 @@
-site_name: pyppl-report
+site_name: pyppl_report
 theme:
     name: 'material'
     font:

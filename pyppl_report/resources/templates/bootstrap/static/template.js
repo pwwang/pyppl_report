@@ -65,6 +65,11 @@ var Collapse = function(index, wrap) {
 		}
 	})
 	$(wrap).replaceWith(tabwrap)
+	tabwrap.on('shown.bs.collapse', function(e){
+		$("html, body").animate({ 
+			scrollTop: $(e.target).prev().offset().top + 'px'
+		})
+	})
 };
 
 var TabType = function(index) {
@@ -83,7 +88,6 @@ var TabWrap = function(selector) {
 	//wraps = $(selector + ':first-of-type')
 	wraps = $(':not('+ selector +') + '+ selector +', '+ selector +':first-child')
 	wraps.each(function(){
-		console.log($(this))
 		$(this).nextUntil(':not('+ selector +')').
 			addBack().
 			wrapAll('<div class="tab-wrapper" />')
@@ -235,4 +239,6 @@ $(document).ready(function () {
 	correctModal()
 
 	createDataTables()
+
+	$("#loadingMask").fadeOut()
 });
