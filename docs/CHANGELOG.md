@@ -1,3 +1,12 @@
+## 0.2.0
+- Rename to pyppl_report due to inability of dash in entry point
+- Report time elapsed for generating reports
+- Use template.html instead of standalone.html for templates
+- Add loading mask for template bootstrap
+- Fix not jumping to collapse head when expanded
+- Fix table header being overlapped in pdf mode
+- Remove scripts in pdf mode
+
 ## 0.1.5
 - Add `pyppl_report` command to convert external markdown files as well
 - Suport PDF output: #1
