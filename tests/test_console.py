@@ -2,6 +2,8 @@ import cmdy
 import pytest
 from pathlib import Path
 HERE = Path(__file__).resolve().parent
+exe = str(HERE / 'pyppl-report')
+
 
 @pytest.fixture
 def infile():
@@ -9,7 +11,7 @@ def infile():
 
 def test_avoid_input_overwriting(infile):
 	before = infile.read_text()
-	cmdy.pyppl_report(i = infile, _exe = 'pyppl-report', _fg = True)
+	cmdy.pyppl_report(i = infile, _exe = exe, _fg = True)
 	assert infile.read_text() == before
 	assert infile.with_suffix('.tmp.md').exists()
 	assert infile.with_suffix('.html').exists()
@@ -18,16 +20,16 @@ def test_avoid_input_overwriting(infile):
 
 def test_only_html_pdf(tmp_path, infile):
 	with pytest.raises(cmdy.CmdyReturnCodeException):
-		cmdy.pyppl_report(i = infile, o = str(tmp_path.with_suffix('.xyz')), _exe = 'pyppl-report', _fg = True)
+		cmdy.pyppl_report(i = infile, o = str(tmp_path.with_suffix('.xyz')), _exe = exe, _fg = True)
 
 def test_pdf(tmp_path, infile):
 	outfile = tmp_path.with_suffix('.pdf')
-	cmdy.pyppl_report(i = infile, o = outfile, _exe = 'pyppl-report', _raise = True, _fg = True)
+	cmdy.pyppl_report(i = infile, o = outfile, _exe = exe, _raise = True, _fg = True)
 	assert outfile.exists()
 
 def test_returncode(tmp_path, infile):
 	outfile = tmp_path.with_suffix('.pdf')
 	with pytest.raises(cmdy.CmdyReturnCodeException):
-		cmdy.pyppl_report(i = infile, o = outfile, _exe = 'pyppl-report', filter = '__notexist__', _raise = True, _fg = True)
+		cmdy.pyppl_report(i = infile, o = outfile, _exe = exe, filter = '__notexist__', _raise = True, _fg = True)
 
 
