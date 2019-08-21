@@ -1,6 +1,6 @@
 """Report generating system using pandoc"""
 import re
-from cmdy import pandoc
+from cmdy import pandoc, wkhtmltopdf
 from pathlib import Path
 
 RESOURCE_DIR     = Path(__file__).resolve().parent / 'resources'
@@ -64,8 +64,12 @@ class Report:
 
 	def __init__(self, rptfiles, outfile, title):
 		self.reports = [ProcReport(rptfile) for rptfile in rptfiles]
+		self.srcpath = ':'.join(str(Path(rptfile).parent) for rptfile in rptfiles)
 		self.outfile = Path(outfile)
-		self.mdfile  = self.outfile.with_suffix('.md')
+		self.mdfile  = self.outfile.resolve().with_suffix('.md')
+		if str(self.mdfile) in [str(Path(rptfile).resolve()) for rptfile in rptfiles]:
+			# don't overwrite input file
+			self.mdfile = self.outfile.with_suffix('.tmp.md')
 		self.title   = title
 		self.cleanup()
 
@@ -104,23 +108,52 @@ class Report:
 		template = template or DEFAULT_TEMPLATE
 		if template and '/' not in template:
 			template = RESOURCE_DIR / 'templates' / template / 'standalone.html'
-		return pandoc(
-			self.mdfile,
-			metadata = [
-				'pagetitle=%s' % self.title,
-				'pyppl_version=%s' % pyppl_version,
-				'report_version=%s' % report_version],
-			read     = 'markdown',
-			write    = 'html',
-			template = template,
-			filter   = [RESOURCE_DIR / 'filters' / (filt + '.py')
-				for filt in DEFAULT_FILTERS] + (filters or []),
-			toc      = True,
-			output   = self.outfile,
-			_raise   = True,
-			_sep     = 'auto',
-			_dupkey  = True,
-			_hold    = True,
-			**{ 'toc-depth': 3,
-				'self-contained': standalone,
-				'resource-path': Path(template).parent})
+		write = None
+		ext   = self.outfile.suffix.lower()
+		if 'htm' in ext or 'pdf' in ext:
+			write = 'html5'
+		else:
+			raise ValueError('Only html and pdf format supported currently.')
+
+		if 'pdf' not in ext:
+			return pandoc(
+				self.mdfile,
+				metadata = [
+					'pagetitle=%s' % self.title,
+					'pyppl_version=%s' % pyppl_version,
+					'report_version=%s' % report_version],
+				read     = 'markdown',
+				write    = write,
+				template = template,
+				filter   = [RESOURCE_DIR / 'filters' / (filt + '.py')
+					for filt in DEFAULT_FILTERS] + (filters or []),
+				toc      = True,
+				output   = self.outfile,
+				_raise   = True,
+				_sep     = 'auto',
+				_dupkey  = True,
+				_hold    = True,
+				**{ 'toc-depth': 3,
+					'self-contained': standalone,
+					'resource-path': self.srcpath + ':' + str(Path(template).parent)})
+		else:
+			return pandoc(
+				self.mdfile,
+				metadata = [
+					'pagetitle=%s' % self.title,
+					'pyppl_version=%s' % pyppl_version,
+					'report_version=%s' % report_version],
+				read     = 'markdown',
+				write    = write,
+				template = template,
+				filter   = [RESOURCE_DIR / 'filters' / (filt + '.py')
+					for filt in DEFAULT_FILTERS if filt != 'modal'] + (filters or []),
+				toc      = True,
+				_pipe    = True,
+				_raise   = True,
+				_sep     = 'auto',
+				_dupkey  = True,
+				**{ 'toc-depth': 3,
+					'self-contained': standalone,
+					'resource-path': self.srcpath + ':' + str(Path(template).parent)}
+				) | wkhtmltopdf('-', _ = self.outfile, _raise = True, _hold = True)

@@ -20,9 +20,13 @@ include = "pyppl-report"
 python = "^3.6"
 pyyaml = "^5.0"
 cmdy = "*"
+pyparam = "*"
 pyppl = "^2.0"
 panflute = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
 pytest-cov = "*"
+
+[tool.poetry.scripts]
+pyppl-report = "pyppl_report.console:main"
