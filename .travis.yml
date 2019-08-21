@@ -21,6 +21,7 @@ script:
   - pytest tests/ -s
 after_success: |
   if [ "$TRAVIS_PYTHON_VERSION" == "3.7" ]; then
+    ./cc-test-reporter format-coverage .coverage.xml --input-type coverage.py
     ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   fi
 deploy:
