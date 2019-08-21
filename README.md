@@ -102,7 +102,7 @@ We use `[1]`, `[2]` ... to link to the references, so HTML links have to be in-p
 [9]: https://img.shields.io/readthedocs/pyppl_report.svg?style=flat-square
 [10]: https://img.shields.io/travis/pwwang/pyppl_report?style=flat-square
 [11]: https://travis-ci.org/pwwang/pyppl_report
-[12]: https://img.shields.io/codacy/grade/e302e2fc3e564059bf249490c840298e?style=flat-square
+[12]: https://img.shields.io/codacy/grade/2b7914a18f794248a62d7b36eb2408a3?style=flat-square
 [13]: https://app.codacy.com/project/pwwang/pyppl_report/dashboard
-[14]: https://img.shields.io/codacy/coverage/e302e2fc3e564059bf249490c840298e?style=flat-square
+[14]: https://img.shields.io/codacy/coverage/2b7914a18f794248a62d7b36eb2408a3?style=flat-square
 
