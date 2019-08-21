@@ -16,13 +16,12 @@ before_install:
   - chmod +x ./cc-test-reporter
 install:
   - poetry install -v
-  - ./cc-test-reporter before-build
 script:
   - pytest tests/ -s
 after_success: |
   if [ "$TRAVIS_PYTHON_VERSION" == "3.7" ]; then
     ./cc-test-reporter format-coverage .coverage.xml --input-type coverage.py
-    ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+    ./cc-test-reporter upload-coverage
   fi
 deploy:
   provider: script
