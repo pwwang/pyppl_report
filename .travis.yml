@@ -8,7 +8,8 @@ before_install:
   - pip install poetry
   - curl -L https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-1-amd64.deb > pandoc.deb # apt doesn't install latest pandoc
   - sudo dpkg -i pandoc.deb
-  - sudo apt-get install xvfb libfontconfig wkhtmltopdf
+  - curl -L https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb > wkhtmltox.deb
+  - sudo dpkg -i wkhtmltox.deb
 install:
   - poetry install -v
   - pip install tox-travis
