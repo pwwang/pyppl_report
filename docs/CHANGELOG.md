@@ -1,3 +1,7 @@
+## 0.1.5
+- Add `pyppl-report` command to convert external markdown files as well
+- Suport PDF output: #1
+
 ## 0.1.4
 - Add image preview for theme bootstrap
 - Format numbers for filetable filter
