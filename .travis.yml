@@ -12,15 +12,16 @@ before_install:
   - sudo apt-get install xvfb libfontconfig xfonts-75dpi xfonts-base
   - curl -L https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb > wkhtmltox.deb
   - sudo dpkg -i wkhtmltox.deb
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
 install:
   - poetry install -v
-  - pip install tox-travis
-  - pip install codacy-coverage
+  - ./cc-test-reporter before-build
 script:
   - pytest tests/ -s
 after_success: |
   if [ "$TRAVIS_PYTHON_VERSION" == "3.7" ]; then
-    python-codacy-coverage -r .coverage.xml
+    ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
   fi
 deploy:
   provider: script
