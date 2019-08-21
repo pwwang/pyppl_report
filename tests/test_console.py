@@ -3,7 +3,7 @@ import pytest
 from pathlib import Path
 HERE = Path(__file__).resolve().parent
 exe = str(HERE / 'pyppl-report')
-
+cmdy.chmod('+x', exe)
 
 @pytest.fixture
 def infile():

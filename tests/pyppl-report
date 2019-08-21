@@ -1,4 +1,4 @@
-#!/home/mayo/m161047/.cache/pypoetry/virtualenvs/pyppl-report-py3.7/bin/python
+#!/usr/bin/env python
 # EASY-INSTALL-ENTRY-SCRIPT: 'pyppl-report','console_scripts','pyppl-report'
 __requires__ = 'pyppl-report'
 import re
