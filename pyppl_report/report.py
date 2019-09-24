@@ -70,7 +70,15 @@ class Report:
 		if str(self.mdfile) in [str(Path(rptfile).resolve()) for rptfile in rptfiles]:
 			# don't overwrite input file
 			self.mdfile = self.outfile.with_suffix('.tmp.md')
-		self.title   = title
+		self.orgtitle = ''
+		if rptfiles:
+			with open(rptfiles[0], 'r') as f:
+				firstline = f.readline().strip()
+				while not firstline:
+					firstline = f.readline().strip()
+				if firstline and firstline[0] == '#' and firstline[1] != '#':
+					self.orgtitle = firstline.lstrip('# ')
+		self.title = title
 		self.cleanup()
 
 	def cleanup(self):
@@ -82,7 +90,9 @@ class Report:
 			return '<sup><a href="#REF_{i}">[{i}]</a></sup>'.format(i = citations[cite])
 
 		with self.mdfile.open('w') as fmd:
-			fmd.write('# %s\n\n' % self.title)
+			# only when self.title starts with # or there is no orgtitle
+			if self.title.startswith('#') or not self.orgtitle:
+				fmd.write('# %s\n\n' % self.title.lstrip('# '))
 			appendix = ''
 			for report in self.reports:
 				# replace reference to citation indexes
@@ -105,7 +115,7 @@ class Report:
 	def generate(self, standalone, template, filters):
 		from pyppl import __version__ as pyppl_version
 		from . import __version__ as report_version
-		
+
 		template = template or DEFAULT_TEMPLATE
 		if template and '/' not in template:
 			template = RESOURCE_DIR / 'templates' / template / 'template.html'
@@ -117,7 +127,9 @@ class Report:
 		args = (self.mdfile, )
 		kwargs = {
 			'metadata': [
-				'pagetitle=%s' % self.title,
+				'pagetitle=%s' % (self.title.lstrip('# ') \
+					if self.title.startswith('#') or not self.orgtitle \
+					else self.orgtitle),
 				'pyppl_version=%s' % pyppl_version,
 				'report_version=%s' % report_version,
 				'pdf=%s' % bool('pdf' in ext)],
@@ -125,7 +137,7 @@ class Report:
 			'write'   : 'html5',
 			'template': template,
 			'filter'  : [	RESOURCE_DIR / 'filters' / (filt + '.py')
-							for filt in DEFAULT_FILTERS 
+							for filt in DEFAULT_FILTERS
 							if filt != 'modal' or 'pdf' not in ext # pdf doesn't do modal
 						] + (filters or []),
 			'toc'           : True,

@@ -16,7 +16,10 @@ params.o = params.out
 params.filter = []
 params.filter.desc = 'The filters for pandoc'
 params.title = 'Untitled document'
-params.title.desc = 'The title of the document.'
+params.title.desc = '''The title of the document.
+If the first element of the document is H1 (#), this will be ignored and the text of H1 will be used as title.
+If the title is specified as "# Title", then a title will be added anyway.
+'''
 params.template = 'bootstrap'
 params.template.desc = 'The template to use. Either standard template name or full path to template file.'
 

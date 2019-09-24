@@ -131,6 +131,8 @@ def pyppl_report(ppl, outfile = None,
 		'%s.report.html' % ('.' + str(ppl.counter) if ppl.counter else ''))
 	logger.report('Generating report using pandoc ...')
 	reports = [proc.report for proc in ppl.procs if proc.report.exists()]
+	# force to add a title.
+	title = '# ' + title if not title.startswith('#') else title
 	cmd = Report(reports, outfile, title).generate(standalone, template, filters)
 	try:
 		logger.debug('Running: ' + cmd.cmd)
