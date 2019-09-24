@@ -1,3 +1,7 @@
+## 0.2.1
+- Ignore title if md doc has h1 for command line mode.
+- Force adding title even if md doc has h1.
+
 ## 0.2.0
 - Rename to pyppl_report due to inability of dash in entry point
 - Report time elapsed for generating reports
