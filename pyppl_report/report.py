@@ -113,10 +113,6 @@ class Report:
 						i=index, cite=cite))
 
 	def generate(self, standalone, template, filters):
-		return self.generateStandalone(template, filters) \
-			if standalone else self.generateNonstand(template, filters)
-
-	def generateNonstand(self, template, filters):
 		from pyppl import __version__ as pyppl_version
 		from . import __version__ as report_version
 
@@ -124,85 +120,50 @@ class Report:
 		if template and '/' not in template:
 			template = RESOURCE_DIR / 'templates' / template / 'template.html'
 
-		mediadir = self.outfile.with_suffix('.files')
 		ext = self.outfile.suffix.lower()
 		if 'htm' not in ext and 'pdf' not in ext:
 			raise ValueError('Only html and pdf format supported currently.')
-		if 'pdf' in ext:
+		if not standalone and 'pdf' in ext:
 			raise ValueError('pdf format has to be standalone.')
 
-		filters = filters or []
-		args = (self.mdfile, )
-		kwargs = {
-			'metadata': [
-				'pagetitle=%s' % (self.title.lstrip('# ') \
-					if self.title.startswith('#') or not self.orgtitle \
-					else self.orgtitle),
-				'pyppl_version=%s' % pyppl_version,
-				'report_version=%s' % report_version,
+		metadata = [
+			'pagetitle=%s' % (self.title.lstrip('# ') \
+				if self.title.startswith('#') or not self.orgtitle \
+				else self.orgtitle),
+			'pyppl_version=%s' % pyppl_version,
+			'report_version=%s' % report_version,
+			'pdf=%s' % bool('pdf' in ext)]
+		if not standalone:
+			mediadir = self.outfile.with_suffix('.files')
+			metadata.extend([
 				'mediadir=%s' % mediadir,
 				'mdname=%s' % mediadir.name,
-				'template=%s' % template,
-				'pdf=False'],
-			'read'    : 'markdown',
-			'write'   : 'html5',
-			'template': template,
-			'filter'  : [	RESOURCE_DIR / 'filters' / (filt + '.py')
-							for filt in DEFAULT_FILTERS + ['nonstand']] + filters,
-			'toc'           : True,
-			'toc-depth'     : 3,
-			'self-contained': False,
-			'resource-path' : ':'.join([
-				'.',
+				'template=%s' % template])
+			srcpath = ['.',
 				str(self.outfile.parent),
 				str(mediadir),
 				str(Path(template).parent)
-			]),
-			'_raise'        : True,
-			'_sep'          : 'auto',
-			'_dupkey'       : True,
-		}
-		if 'pdf' not in ext:
-			kwargs['output'] = self.outfile
-			kwargs['_hold'] = True
-			return pandoc(*args, **kwargs)
+			]
 		else:
-			kwargs['_pipe'] = True
-			return pandoc(*args, **kwargs) | wkhtmltopdf('-', _ = self.outfile, _raise = True, _hold = True)
+			srcpath = [str(Path(template).parent)]
 
-	def generateStandalone(self, template, filters):
-		from pyppl import __version__ as pyppl_version
-		from . import __version__ as report_version
-
-		template = template or DEFAULT_TEMPLATE
-		if template and '/' not in template:
-			template = RESOURCE_DIR / 'templates' / template / 'template.html'
-
-		ext = self.outfile.suffix.lower()
-		if 'htm' not in ext and 'pdf' not in ext:
-			raise ValueError('Only html and pdf format supported currently.')
+		dfilters = DEFAULT_FILTERS[:]
+		if not standalone:
+			dfilters.append('nonstand')
+		dfilters.extend(filters or [])
 
 		args = (self.mdfile, )
 		kwargs = {
-			'metadata': [
-				'pagetitle=%s' % (self.title.lstrip('# ') \
-					if self.title.startswith('#') or not self.orgtitle \
-					else self.orgtitle),
-				'pyppl_version=%s' % pyppl_version,
-				'report_version=%s' % report_version,
-				'pdf=%s' % bool('pdf' in ext)],
+			'metadata': metadata,
 			'read'    : 'markdown',
 			'write'   : 'html5',
 			'template': template,
 			'filter'  : [	RESOURCE_DIR / 'filters' / (filt + '.py')
-							for filt in DEFAULT_FILTERS
-							if filt != 'modal' or 'pdf' not in ext # pdf doesn't do modal
-						] + (filters or []),
+							for filt in dfilters],
 			'toc'           : True,
 			'toc-depth'     : 3,
-			'self-contained': True,
-			#'resource-path' : self.srcpath + ':' + str(Path(template).parent),
-			'resource-path' : str(Path(template).parent),
+			'self-contained': standalone,
+			'resource-path' : ':'.join(srcpath),
 			'_raise'        : True,
 			'_sep'          : 'auto',
 			'_dupkey'       : True,
@@ -213,4 +174,5 @@ class Report:
 			return pandoc(*args, **kwargs)
 		else:
 			kwargs['_pipe'] = True
-			return pandoc(*args, **kwargs) | wkhtmltopdf('-', _ = self.outfile, _raise = True, _hold = True)
+			return pandoc(*args, **kwargs) | wkhtmltopdf(
+				'-', _ = self.outfile, _raise = True, _hold = True)

@@ -106,6 +106,7 @@ def fenced_action(options, data, element, doc):
 				else:
 					maxnum = max(int(cfile.name.split(']')[0][1:]) for cfile in candfiles)
 					destfile = mediadir / ('[{}]{}'.format(maxnum + 1, filepath.name))
+				copyfile(filepath, destfile)
 		else:
 			copyfile(filepath, destfile)
 

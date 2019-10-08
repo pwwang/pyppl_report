@@ -32,4 +32,17 @@ def test_returncode(tmp_path, infile):
 	with pytest.raises(cmdy.CmdyReturnCodeException):
 		cmdy.pyppl_report(i = infile, o = outfile, _exe = exe, filter = '__notexist__', _raise = True, _fg = True)
 
+def test_nonstand_pdf(tmp_path, infile):
+	outfile = tmp_path.with_suffix('.pdf')
+	with pytest.raises(cmdy.CmdyReturnCodeException):
+		cmdy.pyppl_report(i = infile, n = True, o = outfile, _exe = exe, _raise = True, _fg = True)
+
+def test_nonstand(tmp_path, infile):
+	outfile = tmp_path.with_suffix('.html')
+	cmdy.pyppl_report(i = infile, n = True, o = outfile, _exe = exe, _raise = True, _fg = True)
+	assert tmp_path.with_suffix('.files').is_dir()
+	assert tmp_path.with_suffix('.files').joinpath('css').is_dir()
+	assert tmp_path.with_suffix('.files').joinpath('js').is_dir()
+	assert tmp_path.with_suffix('.files').joinpath('css', 'template.css').is_file()
+	assert tmp_path.with_suffix('.files').joinpath('js', 'template.js').is_file()
 
