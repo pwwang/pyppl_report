@@ -1,3 +1,7 @@
+## 0.3.0
+- Add non-standalone mode for html reports
+- Fix bug when disabling report generating report for individual process using `proc.report = False`
+
 ## 0.2.1
 - Ignore title if md doc has h1 for command line mode.
 - Force adding title even if md doc has h1.
