@@ -25,7 +25,7 @@ def setup(config):
 
 @hookimpl
 def procSetAttr(proc, name, value):
-	if name == 'report' and value.startswith('file:'):
+	if name == 'report' and value and value.startswith('file:'):
 		scriptpath = Path(value[5:])
 		if not scriptpath.is_absolute():
 			from inspect import getframeinfo, stack

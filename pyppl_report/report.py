@@ -65,6 +65,7 @@ class Report:
 	def __init__(self, rptfiles, outfile, title):
 		self.reports = [ProcReport(rptfile) for rptfile in rptfiles]
 		#self.srcpath = ':'.join(str(Path(rptfile).parent) for rptfile in rptfiles)
+		print(outfile)
 		self.outfile = Path(outfile)
 		self.mdfile  = self.outfile.resolve().with_suffix('.md')
 		if str(self.mdfile) in [str(Path(rptfile).resolve()) for rptfile in rptfiles]:

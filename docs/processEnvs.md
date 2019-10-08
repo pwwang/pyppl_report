@@ -9,6 +9,10 @@ The value of foo is "{{foo}}".
 """
 ```
 
+!!! Tip
+
+	To disable report generation for a process, just set `proc.report = ''` or `proc.report = False`.
+
 ## Preserved envs variables
 
 We have 4 preserved variables under `pXXX.envs`:
