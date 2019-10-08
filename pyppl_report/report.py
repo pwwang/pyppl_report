@@ -64,7 +64,7 @@ class Report:
 
 	def __init__(self, rptfiles, outfile, title):
 		self.reports = [ProcReport(rptfile) for rptfile in rptfiles]
-		self.srcpath = ':'.join(str(Path(rptfile).parent) for rptfile in rptfiles)
+		#self.srcpath = ':'.join(str(Path(rptfile).parent) for rptfile in rptfiles)
 		self.outfile = Path(outfile)
 		self.mdfile  = self.outfile.resolve().with_suffix('.md')
 		if str(self.mdfile) in [str(Path(rptfile).resolve()) for rptfile in rptfiles]:
@@ -113,6 +113,10 @@ class Report:
 						i=index, cite=cite))
 
 	def generate(self, standalone, template, filters):
+		return self.generateStandalone(template, filters) \
+			if standalone else self.generateNonstand(template, filters)
+
+	def generateNonstand(self, template, filters):
 		from pyppl import __version__ as pyppl_version
 		from . import __version__ as report_version
 
@@ -120,7 +124,61 @@ class Report:
 		if template and '/' not in template:
 			template = RESOURCE_DIR / 'templates' / template / 'template.html'
 
-		ext   = self.outfile.suffix.lower()
+		mediadir = self.outfile.with_suffix('.files')
+		ext = self.outfile.suffix.lower()
+		if 'htm' not in ext and 'pdf' not in ext:
+			raise ValueError('Only html and pdf format supported currently.')
+		if 'pdf' in ext:
+			raise ValueError('pdf format has to be standalone.')
+
+		filters = filters or []
+		args = (self.mdfile, )
+		kwargs = {
+			'metadata': [
+				'pagetitle=%s' % (self.title.lstrip('# ') \
+					if self.title.startswith('#') or not self.orgtitle \
+					else self.orgtitle),
+				'pyppl_version=%s' % pyppl_version,
+				'report_version=%s' % report_version,
+				'mediadir=%s' % mediadir,
+				'mdname=%s' % mediadir.name,
+				'template=%s' % template,
+				'pdf=False'],
+			'read'    : 'markdown',
+			'write'   : 'html5',
+			'template': template,
+			'filter'  : [	RESOURCE_DIR / 'filters' / (filt + '.py')
+							for filt in DEFAULT_FILTERS + ['nonstand']] + filters,
+			'toc'           : True,
+			'toc-depth'     : 3,
+			'self-contained': False,
+			'resource-path' : ':'.join([
+				'.',
+				str(self.outfile.parent),
+				str(mediadir),
+				str(Path(template).parent)
+			]),
+			'_raise'        : True,
+			'_sep'          : 'auto',
+			'_dupkey'       : True,
+		}
+		if 'pdf' not in ext:
+			kwargs['output'] = self.outfile
+			kwargs['_hold'] = True
+			return pandoc(*args, **kwargs)
+		else:
+			kwargs['_pipe'] = True
+			return pandoc(*args, **kwargs) | wkhtmltopdf('-', _ = self.outfile, _raise = True, _hold = True)
+
+	def generateStandalone(self, template, filters):
+		from pyppl import __version__ as pyppl_version
+		from . import __version__ as report_version
+
+		template = template or DEFAULT_TEMPLATE
+		if template and '/' not in template:
+			template = RESOURCE_DIR / 'templates' / template / 'template.html'
+
+		ext = self.outfile.suffix.lower()
 		if 'htm' not in ext and 'pdf' not in ext:
 			raise ValueError('Only html and pdf format supported currently.')
 
@@ -142,8 +200,9 @@ class Report:
 						] + (filters or []),
 			'toc'           : True,
 			'toc-depth'     : 3,
-			'self-contained': standalone,
-			'resource-path' : self.srcpath + ':' + str(Path(template).parent),
+			'self-contained': True,
+			#'resource-path' : self.srcpath + ':' + str(Path(template).parent),
+			'resource-path' : str(Path(template).parent),
 			'_raise'        : True,
 			'_sep'          : 'auto',
 			'_dupkey'       : True,

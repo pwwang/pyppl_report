@@ -5,12 +5,17 @@
 
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
-
+  $if(mediadir)$
+  <link rel="stylesheet" type="text/css" href="$mdname$/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="$mdname$/css/bootstrap-toc.min.css" />
+  <link rel="stylesheet" type="text/css" href="$mdname$/css/datatables.min.css" />
+  <link rel="stylesheet" type="text/css" href="$mdname$/css/template.css" />
+  $else$
   <link rel="stylesheet" type="text/css" href="static/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="static/bootstrap-toc.min.css" />
   <link rel="stylesheet" type="text/css" href="static/datatables.min.css" />
   <link rel="stylesheet" type="text/css" href="static/template.css" />
-
+  $endif$
   <meta name="generator" content="pandoc" />
 
 $for(author-meta)$
@@ -97,12 +102,21 @@ $endfor$
   </div>
   $if(pdf)$
   $else$
-  <script src="static/jquery-3.4.1.min.js"></script>
-  <script src="static/popper.min.js"></script>
-  <script src="static/bootstrap.min.js"></script>
-  <script src="static/bootstrap-toc.min.js"></script>
-  <script src="static/datatables.min.js"></script>
-  <script src="static/template.js"></script>
+    $if(mediadir)$
+    <script src="$mdname$/js/jquery-3.4.1.min.js"></script>
+    <script src="$mdname$/js/popper.min.js"></script>
+    <script src="$mdname$/js/bootstrap.min.js"></script>
+    <script src="$mdname$/js/bootstrap-toc.min.js"></script>
+    <script src="$mdname$/js/datatables.min.js"></script>
+    <script src="$mdname$/js/template.js"></script>
+    $else$
+    <script src="static/jquery-3.4.1.min.js"></script>
+    <script src="static/popper.min.js"></script>
+    <script src="static/bootstrap.min.js"></script>
+    <script src="static/bootstrap-toc.min.js"></script>
+    <script src="static/datatables.min.js"></script>
+    <script src="static/template.js"></script>
+    $endif$
   $endif$
 </body>
 </html>
