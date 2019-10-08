@@ -21,6 +21,9 @@ datatable: # false to disable
 import io
 import json
 import csv
+from pathlib import Path
+from hashlib import md5
+from shutil import copyfile
 import panflute as pf
 
 def formatNumber(number):
@@ -37,7 +40,7 @@ def formatNumber(number):
 def fenced_action(options, data, element, doc):
 	# We'll only run this for CodeBlock elements of class 'table'
 	caption     = options.get('caption', 'Untitled Table')
-	caption     = [pf.Str(caption)]
+	#caption     = [pf.Str(caption)]
 	filepath    = options.get('file')
 	has_header  = options.get('header', True)
 	width       = options.get('width', 1)
@@ -47,6 +50,7 @@ def fenced_action(options, data, element, doc):
 	ncols       = options.get('cols', 0)
 	csvargs     = options.get('csvargs', {})
 	dtargs      = options.get('dtargs', {})
+	mediadir    = doc.get_metadata('mediadir')
 
 	csvargs['dialect']   = csvargs.get('dialect', "unix")
 	csvargs['delimiter'] = csvargs.get('delimiter', "\t").encode().decode('unicode_escape')
@@ -86,6 +90,32 @@ def fenced_action(options, data, element, doc):
 		align = align * ncols
 	align = ['Align' + al.capitalize() for al in align]
 
+	if mediadir and filepath:
+		# copy file to mediadir and check if file exists
+		filepath = Path(filepath)
+		mediadir = Path(mediadir)
+		mediadir.mkdir(exist_ok = True, parents = True)
+		destfile = mediadir / filepath.name
+		if destfile.exists():
+			md5sum1 = md5(destfile.read_bytes()).hexdigest()
+			md5sum2 = md5(filepath.read_bytes()).hexdigest()
+			if (md5sum1 != md5sum2): # rename and copy file
+				candfiles = mediadir.glob("[[]*[]]" + filepath.name)
+				if not candfiles:
+					destfile = mediadir / ('[1]' + filepath.name)
+				else:
+					maxnum = max(int(cfile.name.split(']')[0][1:]) for cfile in candfiles)
+					destfile = mediadir / ('[{}]{}'.format(maxnum + 1, filepath.name))
+				copyfile(filepath, destfile)
+		else:
+			copyfile(filepath, destfile)
+
+		caption = [pf.Link(	pf.Str(caption),
+							url = str(destfile.relative_to(destfile.parent.parent)),
+							title = 'Right clink and "Save link as" to download whole table.',
+							attributes = {'target': '_blank'})]
+	else:
+		caption     = [pf.Str(caption)]
 	table = pf.Table(*body,
 		header=header, caption=caption, width=width, alignment = align)
 	if dtargs is False:
