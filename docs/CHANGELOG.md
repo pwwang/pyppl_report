@@ -1,4 +1,4 @@
-## 0.3.1
+## 0.3.0
 - Add non-standalone mode for html reports
 - Fix bug when disabling report generating report for individual process using `proc.report = False`
 
