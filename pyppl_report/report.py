@@ -133,19 +133,14 @@ class Report:
 			'pyppl_version=%s' % pyppl_version,
 			'report_version=%s' % report_version,
 			'pdf=%s' % bool('pdf' in ext)]
+		srcpath = ['.', str(self.outfile.parent), str(Path(template).parent)]
 		if not standalone:
 			mediadir = self.outfile.with_suffix('.files')
 			metadata.extend([
 				'mediadir=%s' % mediadir,
 				'mdname=%s' % mediadir.name,
 				'template=%s' % template])
-			srcpath = ['.',
-				str(self.outfile.parent),
-				str(mediadir),
-				str(Path(template).parent)
-			]
-		else:
-			srcpath = [str(Path(template).parent)]
+			srcpath.insert(2, str(mediadir))
 
 		dfilters = DEFAULT_FILTERS[:]
 		if not standalone:
