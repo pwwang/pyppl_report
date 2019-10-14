@@ -13,6 +13,10 @@ def prepare(doc):
 	if not mediadir or not template:
 		raise ValueError('Non-standalone mode need mediadir to be set.')
 	mediadir = Path(mediadir)
+	# reset mediadir
+	for path in mediadir.rglob('*'):
+		if path.is_file():
+			path.unlink()
 	mediadir.joinpath('js').mkdir(exist_ok = True, parents = True)
 	mediadir.joinpath('css').mkdir(exist_ok = True, parents = True)
 	template = Path(template)
@@ -23,7 +27,9 @@ def prepare(doc):
 	doc.mediadir = mediadir
 
 def action(elem, doc):
-	if isinstance(elem, pf.Image) and elem.url.startswith('/'): # local image
+	# local image or local link for download
+	if  (isinstance(elem, pf.Image) and elem.url.startswith('/')) or \
+		(isinstance(elem, pf.Link) and elem.title == 'file-download'):
 		filepath = Path(unquote(elem.url))
 		destfile = doc.mediadir.joinpath(filepath.name)
 		if destfile.exists():

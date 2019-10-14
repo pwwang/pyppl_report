@@ -68,7 +68,7 @@ def fenced_action(options, data, element, doc):
 	finally:
 		f.close()
 
-	ncols = len(row)
+	ncols = min(ncols, len(row)) if ncols else len(row)
 	if has_header:
 		header = body.pop(0)
 		if body and len(body[0].content) == len(header.content) + 1:
@@ -83,7 +83,6 @@ def fenced_action(options, data, element, doc):
 	sumwidth    = float(sum(width))
 	total_width = min(total_width, 1)
 	width       = [float(wid)*float(total_width)/sumwidth for wid in width]
-
 	if not isinstance(align, list):
 		align = [align]
 	if len(align) == 1 and ncols:
@@ -100,7 +99,7 @@ def fenced_action(options, data, element, doc):
 			md5sum1 = md5(destfile.read_bytes()).hexdigest()
 			md5sum2 = md5(filepath.read_bytes()).hexdigest()
 			if (md5sum1 != md5sum2): # rename and copy file
-				candfiles = mediadir.glob("[[]*[]]" + filepath.name)
+				candfiles = list(mediadir.glob("[[]*[]]" + filepath.name))
 				if not candfiles:
 					destfile = mediadir / ('[1]' + filepath.name)
 				else:
@@ -115,7 +114,8 @@ def fenced_action(options, data, element, doc):
 							title = 'Right clink and "Save link as" to download whole table.',
 							attributes = {'target': '_blank'})]
 	else:
-		caption     = [pf.Str(caption)]
+		caption = [pf.Str(caption)]
+
 	table = pf.Table(*body,
 		header=header, caption=caption, width=width, alignment = align)
 	if dtargs is False:
