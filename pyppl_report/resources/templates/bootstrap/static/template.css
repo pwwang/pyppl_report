@@ -8,9 +8,9 @@
 	opacity: .8;
 	background-color: #383d41;
 	z-index: 9999;
-	display: flex; 
-	justify-content: center; 
-	align-items: center; 
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	flex-direction: row-reverse;
 }
 

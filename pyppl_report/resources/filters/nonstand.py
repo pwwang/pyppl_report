@@ -7,23 +7,37 @@ from hashlib import md5
 from urllib.parse import unquote
 import panflute as pf
 
+def _copyfile(filepath, destfile):
+	if destfile.exists():
+		md5sum1 = md5(destfile.read_bytes()).hexdigest()
+		md5sum2 = md5(filepath.read_bytes()).hexdigest()
+		if (md5sum1 != md5sum2): # rename and copy file
+			candfiles = list(destfile.parent.glob("[[]*[]]" + destfile.name))
+			if not candfiles:
+				destfile = destfile.parent / ('[1]' + destfile.name)
+			else:
+				maxnum = max(int(cfile.name.split(']')[0][1:]) for cfile in candfiles)
+				destfile = destfile.parent / ('[{}]{}'.format(maxnum + 1, destfile.name))
+			copyfile(filepath, destfile)
+	else:
+		copyfile(str(filepath), str(destfile))
+
+	return destfile
+
 def prepare(doc):
 	mediadir = doc.get_metadata('mediadir')
 	template = doc.get_metadata('template')
-	if not mediadir or not template:
-		raise ValueError('Non-standalone mode need mediadir to be set.')
-	mediadir = Path(mediadir)
-	# reset mediadir
-	for path in mediadir.rglob('*'):
-		if path.is_file():
-			path.unlink()
+	if not mediadir or not template: # pragma: no cover
+		raise ValueError('Non-standalone mode needs mediadir to be set.')
+
+	mediadir = Path(mediadir).parent.joinpath('__common__.files')
 	mediadir.joinpath('js').mkdir(exist_ok = True, parents = True)
 	mediadir.joinpath('css').mkdir(exist_ok = True, parents = True)
 	template = Path(template)
 	for jsfile in template.parent.joinpath('static').glob('*.js'):
-		copyfile(jsfile, mediadir.joinpath('js', jsfile.name))
+		_copyfile(jsfile, mediadir.joinpath('js', jsfile.name))
 	for cssfile in template.parent.joinpath('static').glob('*.css'):
-		copyfile(cssfile, mediadir.joinpath('css', cssfile.name))
+		_copyfile(cssfile, mediadir.joinpath('css', cssfile.name))
 	doc.mediadir = mediadir
 
 def action(elem, doc):
@@ -32,19 +46,7 @@ def action(elem, doc):
 		(isinstance(elem, pf.Link) and elem.title == 'file-download'):
 		filepath = Path(unquote(elem.url))
 		destfile = doc.mediadir.joinpath(filepath.name)
-		if destfile.exists():
-			md5sum1 = md5(destfile.read_bytes()).hexdigest()
-			md5sum2 = md5(filepath.read_bytes()).hexdigest()
-			if (md5sum1 != md5sum2): # rename and copy file
-				candfiles = list(doc.mediadir.glob("[[]*[]]" + filepath.name))
-				if not candfiles:
-					destfile = doc.mediadir / ('[1]' + filepath.name)
-				else:
-					maxnum = max(int(cfile.name.split(']')[0][1:]) for cfile in candfiles)
-					destfile = doc.mediadir / ('[{}]{}'.format(maxnum + 1, filepath.name))
-				copyfile(filepath, destfile)
-		else:
-			copyfile(filepath, destfile)
+		destfile = _copyfile(filepath, destfile)
 		elem.url = str(destfile.relative_to(destfile.parent.parent))
 
 def main(doc=None):

@@ -138,7 +138,6 @@ class Report:
 			mediadir = self.outfile.with_suffix('.files')
 			metadata.extend([
 				'mediadir=%s' % mediadir,
-				'mdname=%s' % mediadir.name,
 				'template=%s' % template])
 			srcpath.insert(2, str(mediadir))
 

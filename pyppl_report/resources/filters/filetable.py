@@ -21,21 +21,36 @@ datatable: # false to disable
 import io
 import json
 import csv
+import re
 from pathlib import Path
 from hashlib import md5
 from shutil import copyfile
 import panflute as pf
+from nonstand import _copyfile
 
-def formatNumber(number):
-	if len(number) < 10 or number.isdigit():
-		return number
+def formatCell(text):
+	if len(text) < 10 or text.isdigit():
+		return pf.Plain(pf.Str(text))
 	try:
-		number = float(number)
-		if number > 0 and number < .001:
-			return '%.3E' % number
-		return '%.3f' % number
+		text = float(text)
+		if text > 0 and text < .001:
+			return pf.Plain(pf.Str('%.3E' % text))
+		return pf.Plain(pf.Str('%.3f' % text))
 	except (ValueError, TypeError):
-		return number
+		# transform links
+		elems = []
+		lastend = None
+		for m in re.finditer(r'\[(.+?)\]\((.+?)\)', text):
+			if lastend is None:
+				elems.append(pf.Str(text[:m.start()]))
+			else:
+				elems.append(pf.Str(text[lastend:m.start()]))
+			elems.append(pf.Link(pf.Str(m.group(1)), url = m.group(2)))
+			lastend = m.end()
+		if elems:
+			elems.append(pf.Str(text[lastend:]))
+			return pf.Plain(*elems)
+		return pf.Plain(pf.Str(text))
 
 def fenced_action(options, data, element, doc):
 	# We'll only run this for CodeBlock elements of class 'table'
@@ -60,10 +75,10 @@ def fenced_action(options, data, element, doc):
 		reader = csv.reader(f, **csvargs)
 		body = []
 		for i, row in enumerate(reader):
-			if nrows and i > nrows + 1:
+			if nrows and i > nrows:
 				continue
-			cells = [pf.TableCell(pf.Plain(pf.Str(formatNumber(x))))
-				for k, x in enumerate(row) if not ncols or k < ncols]
+			cells = [	pf.TableCell(formatCell(x))
+						for k, x in enumerate(row) if not ncols or k < ncols]
 			body.append(pf.TableRow(*cells))
 	finally:
 		f.close()
@@ -74,6 +89,7 @@ def fenced_action(options, data, element, doc):
 		if body and len(body[0].content) == len(header.content) + 1:
 			header.content.insert(0, pf.TableCell(pf.Plain(pf.Str(''))))
 	elif nrows:
+		header = None
 		body = body[:nrows]
 
 	if not isinstance(width, list):
@@ -95,19 +111,7 @@ def fenced_action(options, data, element, doc):
 		mediadir = Path(mediadir)
 		mediadir.mkdir(exist_ok = True, parents = True)
 		destfile = mediadir / filepath.name
-		if destfile.exists():
-			md5sum1 = md5(destfile.read_bytes()).hexdigest()
-			md5sum2 = md5(filepath.read_bytes()).hexdigest()
-			if (md5sum1 != md5sum2): # rename and copy file
-				candfiles = list(mediadir.glob("[[]*[]]" + filepath.name))
-				if not candfiles:
-					destfile = mediadir / ('[1]' + filepath.name)
-				else:
-					maxnum = max(int(cfile.name.split(']')[0][1:]) for cfile in candfiles)
-					destfile = mediadir / ('[{}]{}'.format(maxnum + 1, filepath.name))
-				copyfile(filepath, destfile)
-		else:
-			copyfile(filepath, destfile)
+		destfile = _copyfile(filepath, destfile)
 
 		caption = [pf.Link(	pf.Str(caption),
 							url = str(destfile.relative_to(destfile.parent.parent)),

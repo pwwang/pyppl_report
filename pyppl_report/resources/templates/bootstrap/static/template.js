@@ -66,7 +66,7 @@ var Collapse = function(index, wrap) {
 	})
 	$(wrap).replaceWith(tabwrap)
 	tabwrap.on('shown.bs.collapse', function(e){
-		$("html, body").animate({ 
+		$("html, body").animate({
 			scrollTop: $(e.target).prev().offset().top + 'px'
 		})
 	})
@@ -131,7 +131,7 @@ var adjustImage = function() {
 			$("#figurePreviewer-next").removeAttr('disabled');
 		}
 
-		$('#figurePreviewer-image').attr('src', $img.attr('src')).data('imgindex', i); 
+		$('#figurePreviewer-image').attr('src', $img.attr('src')).data('imgindex', i);
 		$('#figurePreviewer-caption').html($img.next().html())
 		$('#figurePreviewer-modal').modal('show');
 	};
@@ -155,7 +155,7 @@ var adjustImage = function() {
 			// about squared images, too large
 			imgh = $(this).width()
 			imgw = $(this).height()
-			
+
 			if (Math.abs(imgh-imgw)/Math.min(imgh, imgw) < .2 && imgw > 400) {
 				$(this).css('max-width', '60%')
 			}
@@ -171,7 +171,7 @@ var adjustImage = function() {
 		}
 		$(this).on('click', function() {previewImage(image_selector, i)});
 	})
-	
+
 	$('div.tab :has(img[alt])').trigger('display')
 };
 
@@ -207,7 +207,10 @@ var createDataTables = function(){
 		$(this).attr('style', table.attr('style'))
 		table.removeAttr('style')
 		config = JSON.parse($(this).attr('data-datatable'))
-		table.addClass('dataTable').dataTable(config)
+		table.addClass('dataTable')
+		try {
+			table.dataTable(config)
+		} catch(err) {}
 	})
 	$('div.dt-buttons').addClass('btn-group-sm')
 };
