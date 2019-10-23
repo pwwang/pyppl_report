@@ -1,3 +1,11 @@
+## 0.4.0
+- Add directory of outfile to resource-path
+- Fix # alignment error in filetable filter
+- Add download link for non-standalone mode
+- Allow links in filetable in Markdown format
+- Add tests for filters
+- Save common static files in common directory instead to avoid redundant files for non-standalone mode
+
 ## 0.3.0
 - Add non-standalone mode for html reports
 - Fix bug when disabling report generating report for individual process using `proc.report = False`
