@@ -26,11 +26,13 @@ def _copyfile(filepath, destfile):
 
 def prepare(doc):
 	mediadir = doc.get_metadata('mediadir')
+	doc.mediadir = Path(mediadir)
+
 	template = doc.get_metadata('template')
 	if not mediadir or not template: # pragma: no cover
 		raise ValueError('Non-standalone mode needs mediadir to be set.')
 
-	mediadir = Path(mediadir).parent.joinpath('__common__.files')
+	mediadir = doc.mediadir.parent.joinpath('__common__.files')
 	mediadir.joinpath('js').mkdir(exist_ok = True, parents = True)
 	mediadir.joinpath('css').mkdir(exist_ok = True, parents = True)
 	template = Path(template)
@@ -38,7 +40,6 @@ def prepare(doc):
 		_copyfile(jsfile, mediadir.joinpath('js', jsfile.name))
 	for cssfile in template.parent.joinpath('static').glob('*.css'):
 		_copyfile(cssfile, mediadir.joinpath('css', cssfile.name))
-	doc.mediadir = mediadir
 
 def action(elem, doc):
 	# local image or local link for download
