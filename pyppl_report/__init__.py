@@ -89,7 +89,11 @@ def procPostRun(proc):
 		title = proc.desc)
 	rptenvs.update(proc.envs.get('report', {}))
 	rptdata.title = rptenvs.title
-	reportmd = report.render(rptdata).splitlines()
+	try:
+		reportmd = report.render(rptdata)
+	except Exception as exc:
+		raise RuntimeError('Failed to render report markdown for process: %s' % (proc)) from exc
+	reportmd = reportmd.splitlines()
 
 	codeblock = False
 	appendix  = False
