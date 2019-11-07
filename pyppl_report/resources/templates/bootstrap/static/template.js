@@ -150,17 +150,17 @@ var adjustImage = function() {
 		previewImage(image_selector, $('#figurePreviewer-image').data('imgindex') + 1)
 	});
 
-	$('div.tab :has(img[alt])').on('display', function(){
-		$(this).find('img[alt]').each(function(){
-			// about squared images, too large
-			imgh = $(this).width()
-			imgw = $(this).height()
+	// $('div.tab :has(img[alt])').on('display', function(){
+	// 	$(this).find('img[alt]').each(function(){
+	// 		// about squared images, too large
+	// 		imgh = $(this).width()
+	// 		imgw = $(this).height()
 
-			if (Math.abs(imgh-imgw)/Math.min(imgh, imgw) < .2 && imgw > 400) {
-				$(this).css('max-width', '60%')
-			}
-		})
-	})
+	// 		if (Math.abs(imgh-imgw)/Math.min(imgh, imgw) < .2 && imgw > 400) {
+	// 			$(this).css('max-width', '60%')
+	// 		}
+	// 	})
+	// })
 
 	// add legend
 	$(image_selector).each(function(i) {

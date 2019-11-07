@@ -34,6 +34,13 @@ def test_template_abs(proc, reportfile, tmp_path):
 	PyPPL().start(proc).run().report(outfile = reportfile)
 	assertInfile(reportfile, '<h2 id="hello-world">Hello world</h2>')
 
+def test_template_rendererror(proc, reportfile, tmp_path):
+	tplfile = tmp_path / 'pyppl_report-test-template.md'
+	tplfile.write_text('# Hello world {{ x }}')
+	proc.report = 'file:%s' % tplfile
+	with pytest.raises(RuntimeError):
+		PyPPL().start(proc).run().report(outfile = reportfile)
+
 def test_template_nonexist(proc, reportfile):
 	with pytest.raises(ProcAttributeError):
 		proc.report = 'file:__NonExistFile__'

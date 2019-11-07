@@ -46,11 +46,21 @@ table caption {
 	caption-side: top;
 	padding-top: 0rem !important;
 	padding-bottom: .5rem;
+	font-size: .9rem;
 }
 
 img[alt] {
-	cursor: zoom-in
+	cursor: zoom-in;
+	max-width: 100%;
 }
+
+figure {
+	padding: .75rem;
+	background-color: #dad7ff21;
+	max-width: 675px;
+	margin: .75rem 0rem;
+}
+
 
 nav[data-toggle="toc"] {
 	top: 32px;
@@ -99,7 +109,9 @@ h3 {
 }
 
 h4 {
-	font-size: 1rem
+	font-size: 1rem;
+	margin-top: .8rem;
+	margin-bottom: .5rem;
 }
 
 div.card div.card-header h3,
@@ -123,29 +135,25 @@ div.card-header {
 	padding: .25rem
 }
 
-img {
-	max-width: 80%
-}
-
 .page-footer{
 	font-size: .8rem
 }
 
 div.tab div.tab {
 	margin: 4px;
-	background-color: #EEE;
+	background-color: #FFF;
 }
 
 .dataTables_filter label {
 	margin-bottom: 0px;
 }
-.dataTables_wrapper {
-	margin-top: 25px;
-}
+
 .dataTables_wrapper label,
 .dataTables_wrapper li.paginate_button,
-.dataTables_wrapper div.dataTables_info {
-	font-size: .9rem;
+.dataTables_wrapper div.dataTables_info,
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+	font-size: .75rem;
 }
 .dataTables_wrapper > div.row {
 	overflow-x: auto;
@@ -154,6 +162,25 @@ div.tab div.tab {
 	margin-top: 0px !important
 }
 figcaption {
-	padding-left: 12px;
-	padding-bottom: 20px;
+	font-size:.9rem;
+	padding-top: .3rem;
+}
+div.tabwrap {
+	margin-top:1rem !important;
+}
+div.tablewrapper {
+	margin-top:1.5rem !important;
+	margin-bottom:1.5rem !important;
+    padding: 1.5rem .75rem;
+	background-color: #dad7ff21;
+	font-size:.75rem;
+}
+
+.btn-group-sm>.btn, .btn-sm {
+	font-size:.75rem;
+}
+
+/* nav has problems not expanding for the first node */
+nav[data-toggle="toc"] .nav-link:first + ul {
+	display: block; /* Hide by default, but at >768px, show it */
 }
