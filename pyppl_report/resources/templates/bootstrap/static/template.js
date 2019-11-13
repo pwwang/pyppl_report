@@ -172,7 +172,7 @@ var adjustImage = function() {
 		$(this).on('click', function() {previewImage(image_selector, i)});
 	})
 
-	$('div.tab :has(img[alt])').trigger('display')
+	//$('div.tab :has(img[alt])').trigger('display')
 };
 
 var correctModal = function() {
