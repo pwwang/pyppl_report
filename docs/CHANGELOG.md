@@ -1,3 +1,8 @@
+## 0.4.1
+- Raise informative exception while rendering markdown for a process.
+- Adjust styles for default template.
+- Remove unused code in template.js
+
 ## 0.4.0
 - Add directory of outfile to resource-path
 - Fix # alignment error in filetable filter
