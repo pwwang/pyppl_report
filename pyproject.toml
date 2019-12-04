@@ -30,3 +30,4 @@ pytest-cov = "*"
 
 [tool.poetry.scripts]
 pyppl_report = "pyppl_report.console:main"
+pyppl-report = "pyppl_report.console:main"
