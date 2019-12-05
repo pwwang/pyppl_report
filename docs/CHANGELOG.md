@@ -1,3 +1,7 @@
+## 0.4.2
+- Add `pyppl-report` executable
+- Use `diot` instead of `python-box`
+
 ## 0.4.1
 - Raise informative exception while rendering markdown for a process.
 - Adjust styles for default template.
