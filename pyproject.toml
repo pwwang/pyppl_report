@@ -22,7 +22,8 @@ pyyaml = "^5.0"
 cmdy = "*"
 pyparam = "*"
 pyppl = "^2.0"
-panflute = "^1.0.0"
+# panflute has bug on 1.12.* to detect # cols when table header is None
+panflute = "1.11.*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
