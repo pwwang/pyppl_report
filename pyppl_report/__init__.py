@@ -2,9 +2,10 @@ import sys
 from time import time
 from pathlib import Path
 import yaml
+from pyppl import Diot
 from pyppl.plugin import hookimpl, postrun, addmethod
 from pyppl.logger import logger, THEMES, LEVELS_ALWAYS
-from pyppl.utils import fs, Box, formatSecs
+from pyppl.utils import fs, formatSecs
 from pyppl.exception import ProcAttributeError
 from cmdy import CmdyReturnCodeException
 from .report import Report
@@ -17,7 +18,7 @@ def setup(config):
 		colors['REPORT'] = colors['DONE']
 	LEVELS_ALWAYS.add('REPORT')
 	config['report']  = ''
-	config['envs'].update(report = Box(
+	config['envs'].update(report = Diot(
 		level = 2,
 		pre   = '',
 		post  = '',
@@ -71,7 +72,7 @@ def procPostRun(proc):
 		report = tplfile.read_text()
 
 	report  = proc.template(report, **proc.envs)
-	rptdata = Box(jobs = [], **proc.procvars)
+	rptdata = Diot(jobs = [], **proc.procvars)
 	for job in proc.jobs:
 		jobdata  = job.data
 		datafile = job.dir / 'output' / 'job.report.data.yaml'
@@ -80,9 +81,9 @@ def procPostRun(proc):
 		if datafile.is_file():
 			with datafile.open() as fdata:
 				data.update(yaml.safe_load(fdata))
-		rptdata.jobs.append(Box(i = jobdata.i, o = jobdata.o, **data))
+		rptdata.jobs.append(Diot(i = jobdata.i, o = jobdata.o, **data))
 
-	rptenvs  = Box(
+	rptenvs  = Diot(
 		level = 2,
 		pre   = '',
 		post  = '',

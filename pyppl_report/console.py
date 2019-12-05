@@ -2,7 +2,7 @@ import sys
 from os import path
 from pyparam import params
 from cmdy import CmdyReturnCodeException
-from pyppl import Box
+from pyppl import Diot
 from pyppl.logger import logger
 from .report import Report
 
@@ -27,7 +27,7 @@ params.template = 'bootstrap'
 params.template.desc = 'The template to use. Either standard template name or full path to template file.'
 
 def main():
-	opts = params._parse(dict_wrapper = Box)
+	opts = params._parse(dict_wrapper = Diot)
 	cmd = Report(opts.i, opts.o, opts.title).generate(not opts.nonstand, opts.template, opts.filter)
 	try:
 		logger.info('Running: ' + cmd.pipedcmd)
