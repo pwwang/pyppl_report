@@ -1,3 +1,5 @@
+"""pyppl_report/pyppl-report executable"""
+
 import sys
 from os import path
 from pyparam import params
@@ -11,10 +13,12 @@ params['in'].desc = 'The input file.'
 params.i = params['in']
 params.i.type = list
 params.out.desc = 'The output file. Default: <in>.html'
-params.out.callback = lambda opt, ps: opt.setValue(path.splitext(ps.i.value[0])[0] + '.html') if not opt.value else None
+params.out.callback = lambda opt, ps: opt.setValue(path.splitext(ps.i.value[0])[0] + '.html') \
+	if not opt.value else None
 params.o = params.out
 params.nonstand = False
-params.nonstand.desc = 'Non-standalone mode. Save static files in `<filename of --out>.files` separately.'
+params.nonstand.desc = 'Non-standalone mode. ' + \
+	'Save static files in `<filename of --out>.files` separately.'
 params.n = params.nonstand
 params.filter = []
 params.filter.desc = 'The filters for pandoc'
@@ -24,9 +28,11 @@ If the first element of the document is H1 (#), this will be ignored and the tex
 If the title is specified as "# Title", then a title will be added anyway.
 '''
 params.template = 'bootstrap'
-params.template.desc = 'The template to use. Either standard template name or full path to template file.'
+params.template.desc = 'The template to use. ' + \
+	'Either standard template name or full path to template file.'
 
 def main():
+	"""Main entry point"""
 	opts = params._parse(dict_wrapper = Diot)
 	cmd = Report(opts.i, opts.o, opts.title).generate(not opts.nonstand, opts.template, opts.filter)
 	try:

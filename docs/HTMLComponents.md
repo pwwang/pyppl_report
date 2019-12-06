@@ -144,4 +144,3 @@ One report will only have one appendix, so the appendix content from all process
 
 	- Appendix should be claimed exactly using `## Appendix`, which will NOT be adjusted by `envs.report.level`.
 	- Any headings claimed after it will not be adjusted by `envs.report.level`, either. So it should be put at the end of the template
-

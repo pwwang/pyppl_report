@@ -1,7 +1,7 @@
 """Report generating system using pandoc"""
 import re
-from cmdy import pandoc, wkhtmltopdf
 from pathlib import Path
+from cmdy import pandoc, wkhtmltopdf
 
 RESOURCE_DIR     = Path(__file__).resolve().parent / 'resources'
 DEFAULT_FILTERS  = ['filetable', 'modal']
@@ -17,8 +17,8 @@ def _replaceAll(regex, callback, string):
 		ret += callback(match.group(), *match.groups())
 	return ret + string[start:]
 
-class ProcReport:
-
+class ProcReport: # pylint: disable=too-few-public-methods
+	"""Report for each process"""
 	def __init__(self, rptfile):
 		self.rptfile   = Path(rptfile)
 		self.source, self.appendix = self._analysis()
@@ -46,22 +46,22 @@ class ProcReport:
 					appendix.append(line)
 
 		# replace all citation marks with real references
-		def replace(m):
-			index = m[1:-1]
+		def replace(mstr):
+			index = mstr[1:-1]
 			if index not in citations:
-				return m
+				return mstr
 			return '[#REF: %s #]' % citations[index]
 
-		source = source and '\n'.join(source) or ''
+		source = '\n'.join(source) if source else ''
 		source = _replaceAll(r'\[\d+\]', replace, source)
 
-		appendix = appendix and '\n'.join(appendix) or ''
+		appendix = '\n'.join(appendix) if appendix else ''
 		appendix = _replaceAll(r'\[\d+\]', replace, appendix)
 
 		return source, appendix
 
 class Report:
-
+	"""The Report class"""
 	def __init__(self, rptfiles, outfile, title):
 		self.reports = [ProcReport(rptfile) for rptfile in rptfiles]
 		#self.srcpath = ':'.join(str(Path(rptfile).parent) for rptfile in rptfiles)
@@ -82,9 +82,10 @@ class Report:
 		self.cleanup()
 
 	def cleanup(self):
+		"""Cleanup and generate markdown for each process"""
 		citations = {}
-		def replace(m):
-			cite = m[7:-3]
+		def replace(mstr):
+			cite = mstr[7:-3]
 			if cite not in citations:
 				citations[cite] = len(citations) + 1
 			return '<sup><a href="#REF_{i}">[{i}]</a></sup>'.format(i = citations[cite])
@@ -113,6 +114,7 @@ class Report:
 						i=index, cite=cite))
 
 	def generate(self, standalone, template, filters):
+		"""Generate the reports"""
 		from pyppl import __version__ as pyppl_version
 		from . import __version__ as report_version
 
@@ -166,7 +168,6 @@ class Report:
 			kwargs['output'] = self.outfile
 			kwargs['_hold'] = True
 			return pandoc(*args, **kwargs)
-		else:
-			kwargs['_pipe'] = True
-			return pandoc(*args, **kwargs) | wkhtmltopdf(
-				'-', _ = self.outfile, _raise = True, _hold = True)
+		kwargs['_pipe'] = True
+		return pandoc(*args, **kwargs) | wkhtmltopdf(
+			'-', _ = self.outfile, _raise = True, _hold = True)
