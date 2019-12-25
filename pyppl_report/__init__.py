@@ -2,101 +2,96 @@
 import sys
 from time import time
 from pathlib import Path
-import yaml
-from pyppl import Diot
-from pyppl.plugin import hookimpl, postrun, addmethod
-from pyppl.logger import logger, THEMES, LEVELS_ALWAYS
-from pyppl.utils import fs, formatSecs
-from pyppl.exception import ProcAttributeError
+import toml
 from cmdy import CmdyReturnCodeException
+from diot import Diot
+from pyppl.plugin import hookimpl
+from pyppl.logger import logger
+from pyppl.jobmgr import STATES
+from pyppl.utils import fs, format_secs
+from pyppl.exception import ProcessAttributeError
 from .report import Report
 
-__version__ = "0.4.2"
+__version__ = "0.5.0"
 
-@hookimpl
-def setup(config):
-	"""Setup the plugin"""
-	for colors in THEMES.values():
-		colors['REPORT'] = colors['DONE']
-	LEVELS_ALWAYS.add('REPORT')
-	config['report']  = ''
-	config['envs'].update(report = Diot(
-		level = 2,
-		pre   = '',
-		post  = '',
-	))
-
-@hookimpl
-def procSetAttr(proc, name, value):
-	"""Handle proc.report = xxx"""
-	if name == 'report' and value and value.startswith('file:'):
+def report_template_converter(value):
+	if value and value.startswith('file:'):
 		scriptpath = Path(value[5:])
 		if not scriptpath.is_absolute():
 			from inspect import getframeinfo, stack
 
 			# 0: .../pyppl_report/pyppl_report/__init__.py
-			# 1: .../pluggy/callers.py
-			# 2: .../pluggy/manager.py
-			# 3: .../pluggy/manager.py
-			# 4: .../pluggy/hooks.py
-			# 5: .../PyPPL/pyppl/proc.py
-			# 6: /file/define/the/report
+			# 1: ...//PyPPL/pyppl/plugin.py
+			# 2: ...//pyppl_report/pyppl_report/__init__.py
+			# 3: .../pluggy/callers.py
+			# 4: .../pluggy/manager.py
+			# 5: .../pluggy/manager.py
+			# 6: .../pluggy/hooks.py
+			# 7: .../PyPPL/pyppl/proc.py
+			# 8: .../PyPPL/pyppl/proc.py
+			# 9: .../PyPPL/pyppl/pyppl.py
+			# 10: /file/define/the/report
 			# if it fails in the future, check if the callstacks changed from pluggy
-			caller = getframeinfo(stack()[6][0])
+			caller = getframeinfo(stack()[10][0])
 			scriptdir = Path(caller.filename).parent.resolve()
 			scriptpath = scriptdir / scriptpath
 		if not scriptpath.is_file():
-			raise ProcAttributeError(
+			raise ProcessAttributeError(
 				'Report template file does not exist: %s' % scriptpath)
-		proc.config[name] = "file:%s" % scriptpath
+		return "file:%s" % scriptpath
+	return value
 
 @hookimpl
-def procGetAttr(proc, name):
-	"""Pre-calculate the attribute"""
-	if name == 'report':
-		return Path(proc.workdir) / 'proc.report.md'
+def setup(config):
+	"""Setup the plugin"""
+	config.config.report_template = ''
+	config.config.report_envs = Diot(level = 2, pre = '', post = '')
 
 @hookimpl
-def procPostRun(proc):
+def logger_init(logger): # pylint: disable=redefined-outer-name
+	logger.add_level('report')
+
+@hookimpl
+def proc_init(proc):
+	proc.add_config('report_template', default = '', converter = report_template_converter)
+	proc.add_config('report_envs', default = Diot(), converter = lambda envs: envs or Diot())
+
+@hookimpl
+def proc_postrun(proc, status):
 	"""Generate report for the process"""
-	fs.remove(proc.report)
-	if not proc.config.report:
+	# skip if process failed or cached
+	report_file = proc.workdir.joinpath('proc.report.md')
+	template    = proc.config.report_template
+	if status != 'succeeded' or not template or (
+		all(job.state == STATES.DONECACHED for job in proc.jobs) and \
+		report_file.is_file()):
 		return
 
-	logger.debug('Rendering report template ...')
-	report = proc.config.report
-	if report.startswith ('file:'):
-		tplfile = Path(report[5:])
-		## checked at __setattr__
-		## and we are not able to change it on the run
-		# if not fs.exists (tplfile):
-		#	raise ProcAttributeError(tplfile, 'No such report template file')
+	fs.remove(report_file)
+	logger.debug('Rendering report template ...', proc = proc.id)
+	if template.startswith ('file:'):
+		tplfile = Path(template[5:])
 		logger.debug("Using report template: %s", tplfile, proc = proc.id)
-		report = tplfile.read_text()
+		template = tplfile.read_text()
 
-	report  = proc.template(report, **proc.envs)
-	rptdata = Diot(jobs = [], **proc.procvars)
+	template = proc.template(template, **proc.envs)
+	rptdata  = Diot(jobs = [], proc = proc)
 	for job in proc.jobs:
-		jobdata  = job.data
-		datafile = job.dir / 'output' / 'job.report.data.yaml'
-		data = {}
-		data.update(jobdata.job)
+		datafile = job.dir / 'output/job.report.data.toml'
+		data = job.data.copy()
 		if datafile.is_file():
 			with datafile.open() as fdata:
-				data.update(yaml.safe_load(fdata))
-		rptdata.jobs.append(Diot(i = jobdata.i, o = jobdata.o, **data))
+				data.update(toml.load(fdata))
+		rptdata.jobs.append(data)
 
-	rptenvs  = Diot(
-		level = 2,
-		pre   = '',
-		post  = '',
-		title = proc.desc)
-	rptenvs.update(proc.envs.get('report', {}))
+	rptenvs  = Diot(level = 2, pre = '', post = '', title = proc.desc)
+	rptenvs.update(proc.config.report_envs)
 	rptdata.title = rptenvs.title
 	try:
-		reportmd = report.render(rptdata)
+		reportmd = template.render(rptdata)
 	except Exception as exc:
-		raise RuntimeError('Failed to render report markdown for process: %s' % (proc)) from exc
+		raise RuntimeError(
+			'Failed to render report markdown for process: %s' % (proc)) from exc
 	reportmd = reportmd.splitlines()
 
 	codeblock = False
@@ -113,16 +108,18 @@ def procPostRun(proc):
 		elif line.startswith('```'):
 			codeblock = len(line) - len(line.lstrip('`'))
 
-	proc.report.write_text(
+	report_file.write_text(
 		proc.template(rptenvs.pre, **proc.envs).render(rptdata) + '\n\n' +
 		'\n'.join(reportmd) + '\n\n' +
 		proc.template(rptenvs.post, **proc.envs).render(rptdata) + '\n'
 	)
 
-@postrun
-def pypplReport(ppl, outfile = None,
-	title = 'A report generated by pipeline powered by PyPPL',
-	standalone = True, template = False, filters = False):
+def report(ppl,
+	outfile = None,
+	title      = 'A report generated by pipeline powered by PyPPL',
+	standalone = True,
+	template   = False,
+	filters    = False):
 	"""@API
 	Generate report for the pipeline.
 	Currently only HTML format supported.
@@ -132,27 +129,25 @@ def pypplReport(ppl, outfile = None,
 			- Default: 'A report generated by pipeline powered by PyPPL'
 		standalone (bool): A standalone html file? Default: True
 			- Otherwise, static files, including js/css/images will be store in a separated directory.
-	@returns:
-		(PyPPL): The pipeline object itppl.
 	"""
-	timer = time()
-	outfile = outfile or (Path('.') / Path(sys.argv[0]).stem).with_suffix(
-		'%s.report.html' % ('.' + str(ppl.counter) if ppl.counter else ''))
+	timer   = time()
+	outfile = outfile or Path('.').joinpath('%s.report.html' % ppl.name)
 	logger.report('Generating report using pandoc ...')
-	reports = [proc.report for proc in ppl.procs if proc.report.exists()]
+	reports = [proc.workdir.joinpath('proc.report.md') for proc in ppl.procs
+		if proc.workdir.joinpath('proc.report.md').exists()]
 	# force to add a title.
 	title = '# ' + title if not title.startswith('#') else title
 	cmd = Report(reports, outfile, title).generate(standalone, template, filters)
 	try:
 		logger.debug('Running: ' + cmd.cmd)
 		cmd.run()
-		logger.report('Time elapsed: %s, report generated: %s' % (
-			formatSecs(time() - timer), str(outfile)))
+		logger.report('Report generated: %s', outfile)
+		logger.report('Time elapsed: %s', format_secs(time() - timer))
 	except CmdyReturnCodeException as ex:
 		logger.error(str(ex))
 		sys.exit(1)
 
 @hookimpl
-def pypplInit(ppl):
+def pyppl_init(ppl):
 	"""Add method to PyPPL instance"""
-	addmethod(ppl, 'report', pypplReport)
+	ppl.add_method(report, require = 'run')

@@ -7,7 +7,7 @@ RESOURCE_DIR     = Path(__file__).resolve().parent / 'resources'
 DEFAULT_FILTERS  = ['filetable', 'modal']
 DEFAULT_TEMPLATE = 'bootstrap'
 
-def _replaceAll(regex, callback, string):
+def _replace_all(regex, callback, string):
 	matches = re.finditer(regex, string)
 	ret = ''
 	start = 0
@@ -53,10 +53,10 @@ class ProcReport: # pylint: disable=too-few-public-methods
 			return '[#REF: %s #]' % citations[index]
 
 		source = '\n'.join(source) if source else ''
-		source = _replaceAll(r'\[\d+\]', replace, source)
+		source = _replace_all(r'\[\d+\]', replace, source)
 
 		appendix = '\n'.join(appendix) if appendix else ''
-		appendix = _replaceAll(r'\[\d+\]', replace, appendix)
+		appendix = _replace_all(r'\[\d+\]', replace, appendix)
 
 		return source, appendix
 
@@ -97,9 +97,9 @@ class Report:
 			appendix = ''
 			for report in self.reports:
 				# replace reference to citation indexes
-				source = _replaceAll(r'\[#REF: .+? #\]', replace, report.source)
+				source = _replace_all(r'\[#REF: .+? #\]', replace, report.source)
 				if report.appendix:
-					appendix += _replaceAll(r'\[#REF: .+? #\]', replace, report.appendix)
+					appendix += _replace_all(r'\[#REF: .+? #\]', replace, report.appendix)
 
 				fmd.write(source + '\n\n')
 

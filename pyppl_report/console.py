@@ -4,7 +4,7 @@ import sys
 from os import path
 from pyparam import params
 from cmdy import CmdyReturnCodeException
-from pyppl import Diot
+from diot import Diot
 from pyppl.logger import logger
 from .report import Report
 

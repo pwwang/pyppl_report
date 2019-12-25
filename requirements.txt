@@ -1,7 +1,7 @@
 cmdy
 panflute==1.11.*
 pyparam
-pyppl==2.*,>=2.0.0
+pyppl
 pytest
 pytest-cov
-pyyaml==5.*,>=5.0.0
+toml==0.*,>=0.10.0
