@@ -75,7 +75,7 @@ def proc_postrun(proc, status):
 		template = tplfile.read_text()
 
 	template = proc.template(template, **proc.envs)
-	rptdata  = Diot(jobs = [], proc = proc)
+	rptdata  = Diot(jobs = [], proc = proc, args = proc.args)
 	for job in proc.jobs:
 		datafile = job.dir / 'output/job.report.data.toml'
 		data = job.data.copy()

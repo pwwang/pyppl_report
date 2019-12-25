@@ -17,7 +17,7 @@ pip install pyppl_report
 ### Specifiation of template
 
 ````python
-pPyClone.report = """
+pPyClone.config.report_template = """
 ## {{title}}
 
 PyClone[1] is a tool using Probabilistic model for inferring clonal population structure from deep NGS sequencing.
@@ -35,23 +35,27 @@ rows: 10
 
 # or use a template file
 
-pPyClone.report = "file:/path/to/template.md"
+pPyClone.config.report_template = "file:/path/to/template.md"
 ````
 
 ### Generating report
 ```python
 PyPPL().start(pPyClone).run().report('/path/to/report', title = 'Clonality analysis using PyClone')
+
+# or save report in a directory
+PyPPL(name = 'Awesome-pipeline').start(pPyClone).run().report('/path/to/')
+# report generated at ./Awesome-pipeline.report.html
 ```
 
 ![Snapshort](https://pyppl_report.readthedocs.io/en/latest/snapshot.png)
 
 ### Extra data for rendering
-You can generate a `YAML` file named `job.report.data.yaml` under `<job.outdir>` with extra data to render the report template. Beyond that, `proc` attributes and `args` can also be used.
+You can generate a `toml` file named `job.report.data.toml` under `<job.outdir>` with extra data to render the report template. Beyond that, `proc` attributes and `args` can also be used.
 
 For example:
-`job.report.data.yaml`:
-```yaml
-description: 'A awesome report for job 1'
+`job.report.data.toml`:
+```toml
+description = 'A awesome report for job 1'
 ```
 Then in your template, you can use it:
 ```markdown
@@ -76,11 +80,8 @@ csvargs    : # csvargs for `csv.read`
 ````
 
 You may also specify `width` and `align` for individual columns:
-```yaml
-width:
-  - .1
-  - .2
-  - .1
+```toml
+width = [.1, .2, .1]
 ```
 
 ### References
