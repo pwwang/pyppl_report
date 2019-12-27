@@ -24,7 +24,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='pyppl_report',
-    version='0.5.0pre1',
+    version='0.5.0',
     description='A report generating system for PyPPL',
     python_requires='==3.*,>=3.6.0',
     project_urls={"homepage": "https://github.com/pwwang/pyppl_report", "repository": "https://github.com/pwwang/pyppl_report"},

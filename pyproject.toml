@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "pyppl_report"
-version = "0.5.0pre1"
+version = "0.5.0"
 description = "A report generating system for PyPPL"
 authors = [ "pwwang <pwwang@pwwang.com>",]
 license = "MIT"
@@ -21,7 +21,6 @@ python = "^3.6"
 toml = "^0.10"
 cmdy = "*"
 pyppl = "*"
-# panflute has bug on 1.12.* to detect # cols when table header is None
 panflute = "1.11.*"
 
 [tool.poetry.dev-dependencies]
