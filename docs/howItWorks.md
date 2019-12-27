@@ -2,7 +2,7 @@ Following figure demonstrates how the plugin works:
 
 ![How it works](./howitworks.png)
 
-Each process that you want to report, will need to have a template assigned with `pXXX.report`. Like scripts, you may prefice it with `file:`, and then followed by an absolute path to the template or a relative one to where it's assigned. You may even assign a template using a direct string. A process with no template assign will be hidden from the report.
+Each process that you want to report, will need to have a template assigned with `pXXX.config.report_template`. Like scripts, you may prefice it with `file:`, and then followed by an absolute path to the template or a relative one to where it's assigned. You may even assign a template using a direct string. A process with no template assign will be hidden from the report.
 
 You can use the data from the jobs or the process to render the template.
 

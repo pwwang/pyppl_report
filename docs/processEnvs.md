@@ -1,10 +1,10 @@
 You may pass values to process envs to control report content:
 ```python
-pXXX.envs.report.foo = "bar"
+pXXX.config.report_envs.foo = "bar"
 ```
 Then in you can use it in the report template:
 ```python
-pXXX.report = """
+pXXX.config.report_template = """
 The value of foo is "{{foo}}".
 """
 ```
@@ -18,18 +18,18 @@ The value of foo is "{{foo}}".
 We have 4 preserved variables under `pXXX.envs`:
 ```python
 # Control the level of headings in the
-pXXX.envs.report.level = 2
+pXXX.config.report_envs.level = 2
 # Content to add before the template
-pXXX.envs.report.pre = ''
+pXXX.config.report_envs.pre = ''
 # Content to add after the template
-pXXX.envs.report.post = ''
+pXXX.config.report_envs.post = ''
 # The title of the process report
-pXXX.envs.report.title = None
+pXXX.config.report_envs.title = None
 ```
 
 ### Process report levels
 
-No matter at which level you want to put this process report in the entire report, you need to each heading from level 1, then according to `pXXX.envs.report.level`, the headings will be shifted to corresponding level. For example, with `pXXX.envs.report.level = 2`, following template
+No matter at which level you want to put this process report in the entire report, you need to each heading from level 1, then according to `pXXX.config.report_envs.level`, the headings will be shifted to corresponding level. For example, with `pXXX.config.report_envs.level = 2`, following template
 
 ```markdown
 # Section
@@ -50,7 +50,7 @@ content
 
 ### Adding extra contents to process report
 
-You may add extra contents to the process report. For example, if you put the process report at level 3, then you probably need a level-2 heading. For previous example, if you have `pXXX.envs.report.level = 3`, without a level-2 heading, the entire report will look like:
+You may add extra contents to the process report. For example, if you put the process report at level 3, then you probably need a level-2 heading. For previous example, if you have `pXXX.config.report_envs.level = 3`, without a level-2 heading, the entire report will look like:
 
 ```markdown
 # An awesome report
@@ -60,7 +60,7 @@ You may add extra contents to the process report. For example, if you put the pr
 content
 ```
 
-Then you missed a level-2 heading, which will make your report look wired. Here you can specify a level-2 heading with `pXXX.envs.report.pre = '## I am H2'`:
+Then you missed a level-2 heading, which will make your report look wired. Here you can specify a level-2 heading with `pXXX.config.report_envs.pre = '## I am H2'`:
 
 ```markdown
 # An awesome report
@@ -71,15 +71,15 @@ Then you missed a level-2 heading, which will make your report look wired. Here 
 content
 ```
 
-You may also append something to the process report with `pXXX.envs.report.post`
+You may also append something to the process report with `pXXX.config.report_envs.post`
 
 !!! warning
 
-	Headings added by `pre` and `post` will not be adjusted by `pXXX.envs.report.level`
+	Headings added by `pre` and `post` will not be adjusted by `pXXX.config.report_envs.level`
 
 ### Title of the process report
 
-By default, if not assigned or assigned with `None`, the process description will be used as the title of the process report. Of course you can overwrite it with `pXXX.envs.report.title`.
+By default, if not assigned or assigned with `None`, the process description will be used as the title of the process report. Of course you can overwrite it with `pXXX.config.report_envs.title`.
 
 ```python
 # by default
@@ -93,7 +93,7 @@ will be rendered as (remember default level is 2):
 ## Some analysis
 ```
 
-with `pXXX.envs.report.title = 'An amazing analysis'`, we will have:
+with `pXXX.config.report_envs.title = 'An amazing analysis'`, we will have:
 
 ```markdown
 ## An amazing analysis
@@ -113,4 +113,4 @@ I have enough details.
 {% endif %}
 ```
 
-Then you can show that image in the report only when you have `pXXX.envs.report.showimage = True`.
+Then you can show that image in the report only when you have `pXXX.config.report_envs.showimage = True`.

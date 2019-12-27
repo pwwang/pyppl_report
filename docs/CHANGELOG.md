@@ -1,3 +1,6 @@
+## 0.5.0
+- Adopt `PyPPL 3.0`
+
 ## 0.4.2
 - Add `pyppl-report` executable
 - Use `diot` instead of `python-box`
