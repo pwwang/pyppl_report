@@ -49,9 +49,8 @@ def test_template_rendererror(proc, reportfile, tmp_path):
 		PyPPL().start(proc).run().report(outfile = reportfile)
 
 def test_template_nonexist(proc, reportfile):
-	proc.config.report_template = 'file:__NonExistFile__'
 	with pytest.raises(ProcessAttributeError):
-		proc.config.report_template
+		proc.config.report_template = 'file:__NonExistFile__'
 
 def test_template_rel(proc, reportfile):
 	proc.config.report_template = 'file:rel_template.md'

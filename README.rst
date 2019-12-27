@@ -57,7 +57,7 @@ Specifiation of template
 
 .. code-block:: python
 
-   pPyClone.report = """
+   pPyClone.config.report_template = """
    ## {{title}}
 
    PyClone[1] is a tool using Probabilistic model for inferring clonal population structure from deep NGS sequencing.
@@ -75,7 +75,7 @@ Specifiation of template
 
    # or use a template file
 
-   pPyClone.report = "file:/path/to/template.md"
+   pPyClone.config.report_template = "file:/path/to/template.md"
 
 Generating report
 ^^^^^^^^^^^^^^^^^
@@ -83,6 +83,10 @@ Generating report
 .. code-block:: python
 
    PyPPL().start(pPyClone).run().report('/path/to/report', title = 'Clonality analysis using PyClone')
+
+   # or save report in a directory
+   PyPPL(name = 'Awesome-pipeline').start(pPyClone).run().report('/path/to/')
+   # report generated at ./Awesome-pipeline.report.html
 
 
 .. image:: https://pyppl_report.readthedocs.io/en/latest/snapshot.png
@@ -93,14 +97,14 @@ Generating report
 Extra data for rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can generate a ``YAML`` file named ``job.report.data.yaml`` under ``<job.outdir>`` with extra data to render the report template. Beyond that, ``proc`` attributes and ``args`` can also be used.
+You can generate a ``toml`` file named ``job.report.data.toml`` under ``<job.outdir>`` with extra data to render the report template. Beyond that, ``proc`` attributes and ``args`` can also be used.
 
 For example:
-``job.report.data.yaml``\ :
+``job.report.data.toml``\ :
 
-.. code-block:: yaml
+.. code-block::
 
-   description: 'A awesome report for job 1'
+   description = 'A awesome report for job 1'
 
 Then in your template, you can use it:
 
@@ -128,12 +132,9 @@ Showing tables with csv/tsv file
 
 You may also specify ``width`` and ``align`` for individual columns:
 
-.. code-block:: yaml
+.. code-block::
 
-   width:
-     - .1
-     - .2
-     - .1
+   width = [.1, .2, .1]
 
 References
 ^^^^^^^^^^

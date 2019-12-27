@@ -24,7 +24,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='pyppl_report',
-    version='0.5.0pre0',
+    version='0.5.0pre1',
     description='A report generating system for PyPPL',
     python_requires='==3.*,>=3.6.0',
     project_urls={"homepage": "https://github.com/pwwang/pyppl_report", "repository": "https://github.com/pwwang/pyppl_report"},
@@ -34,7 +34,7 @@ setup(
     entry_points={"console_scripts": ["pyppl_report = pyppl_report.console:main", "pyppl-report = pyppl_report.console:main"], "pyppl": ["pyppl_report = pyppl_report"]},
     packages=['pyppl_report'],
     package_dir={"": "."},
-    package_data={"pyppl_report": ["resources/templates/bootstrap/*.html", "resources/templates/bootstrap/static/*.css", "resources/templates/bootstrap/static/*.js"]},
+    package_data={"pyppl_report": ["*.bak", "resources/templates/bootstrap/*.html", "resources/templates/bootstrap/static/*.css", "resources/templates/bootstrap/static/*.js"]},
     install_requires=['cmdy', 'panflute==1.11.*', 'pyparam', 'pyppl', 'toml==0.*,>=0.10.0'],
     extras_require={"dev": ["pytest", "pytest-cov"]},
 )

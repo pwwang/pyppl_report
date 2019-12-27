@@ -15,24 +15,18 @@ from .report import Report
 __version__ = "0.5.0"
 
 def report_template_converter(value):
+	"""Convert relative path of a template to absolute"""
 	if value and value.startswith('file:'):
 		scriptpath = Path(value[5:])
 		if not scriptpath.is_absolute():
 			from inspect import getframeinfo, stack
 
 			# 0: .../pyppl_report/pyppl_report/__init__.py
-			# 1: ...//PyPPL/pyppl/plugin.py
-			# 2: ...//pyppl_report/pyppl_report/__init__.py
-			# 3: .../pluggy/callers.py
-			# 4: .../pluggy/manager.py
-			# 5: .../pluggy/manager.py
-			# 6: .../pluggy/hooks.py
-			# 7: .../PyPPL/pyppl/proc.py
-			# 8: .../PyPPL/pyppl/proc.py
-			# 9: .../PyPPL/pyppl/pyppl.py
-			# 10: /file/define/the/report
+			# 1: .../PyPPL/pyppl/plugin.py
+			# 2: .../site-packages/diot.py
+			# 3: .../pyppl_report/tests/test_report.py
 			# if it fails in the future, check if the callstacks changed from pluggy
-			caller = getframeinfo(stack()[10][0])
+			caller = getframeinfo(stack()[3][0])
 			scriptdir = Path(caller.filename).parent.resolve()
 			scriptpath = scriptdir / scriptpath
 		if not scriptpath.is_file():
@@ -49,10 +43,12 @@ def setup(config):
 
 @hookimpl
 def logger_init(logger): # pylint: disable=redefined-outer-name
+	"""Add log level"""
 	logger.add_level('report')
 
 @hookimpl
 def proc_init(proc):
+	"""Add config"""
 	proc.add_config('report_template', default = '', converter = report_template_converter)
 	proc.add_config('report_envs', default = Diot(), converter = lambda envs: envs or Diot())
 
