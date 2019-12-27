@@ -20,7 +20,6 @@ include = "pyppl_report"
 python = "^3.6"
 toml = "^0.10"
 cmdy = "*"
-pyparam = "*"
 pyppl = "*"
 # panflute has bug on 1.12.* to detect # cols when table header is None
 panflute = "1.11.*"
@@ -28,10 +27,7 @@ panflute = "1.11.*"
 [tool.poetry.dev-dependencies]
 pytest = "*"
 pytest-cov = "*"
-
-[tool.poetry.scripts]
-pyppl_report = "pyppl_report.console:main"
-pyppl-report = "pyppl_report.console:main"
+pyparam = "*"
 
 [tool.poetry.plugins.pyppl]
 pyppl_report = "pyppl_report"

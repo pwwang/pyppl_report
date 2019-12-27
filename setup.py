@@ -31,10 +31,10 @@ setup(
     author='pwwang',
     author_email='pwwang@pwwang.com',
     license='MIT',
-    entry_points={"console_scripts": ["pyppl_report = pyppl_report.console:main", "pyppl-report = pyppl_report.console:main"], "pyppl": ["pyppl_report = pyppl_report"]},
+    entry_points={"pyppl": ["pyppl_report = pyppl_report"]},
     packages=['pyppl_report'],
     package_dir={"": "."},
     package_data={"pyppl_report": ["*.bak", "resources/templates/bootstrap/*.html", "resources/templates/bootstrap/static/*.css", "resources/templates/bootstrap/static/*.js"]},
-    install_requires=['cmdy', 'panflute==1.11.*', 'pyparam', 'pyppl', 'toml==0.*,>=0.10.0'],
-    extras_require={"dev": ["pytest", "pytest-cov"]},
+    install_requires=['cmdy', 'panflute==1.11.*', 'pyppl', 'toml==0.*,>=0.10.0'],
+    extras_require={"dev": ["pyparam", "pytest", "pytest-cov"]},
 )

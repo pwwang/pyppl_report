@@ -153,3 +153,44 @@ def report(ppl,
 def pyppl_init(ppl):
 	"""Add method to PyPPL instance"""
 	ppl.add_method(report, require = 'run')
+
+@hookimpl
+def cli_addcmd(commands):
+	"""Add subcommand to pyppl"""
+	commands.report = 'Convert a Markdown file to report.'
+	params = commands.report
+	params['in'].required = True
+	params['in'].desc = 'The input file.'
+	params.i = params['in']
+	params.i.type = list
+	params.out.desc = 'The output file. Default: <in>.html'
+	params.out.callback = lambda opt, ps: opt.setValue(Path(ps.i.value[0]).with_suffix('.html')) \
+		if not opt.value else None
+	params.o = params.out
+	params.nonstand = False
+	params.nonstand.desc = 'Non-standalone mode. ' + \
+		'Save static files in `<filename of --out>.files` separately.'
+	params.n = params.nonstand
+	params.filter = []
+	params.filter.desc = 'The filters for pandoc'
+	params.title = 'Untitled document'
+	params.title.desc = '''The title of the document.
+	If the first element of the document is H1 (#), this will be ignored and the text of H1 will be used as title.
+	If the title is specified as "# Title", then a title will be added anyway.
+	'''
+	params.template = 'bootstrap'
+	params.template.desc = 'The template to use. ' + \
+		'Either standard template name or full path to template file.'
+
+@hookimpl
+def cli_execcmd(command, opts):
+	"""Run the command"""
+	if command == 'report':
+		cmd = Report(opts.i, opts.o, opts.title).generate(not opts.nonstand, opts.template, opts.filter)
+		try:
+			logger.info('Running: ' + cmd.pipedcmd)
+			cmd.run()
+			logger.info('Report generated: ' + str(opts.o))
+		except CmdyReturnCodeException as ex:
+			logger.error(str(ex))
+			sys.exit(1)

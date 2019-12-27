@@ -1,17 +1,26 @@
+import sys
 import cmdy
 import pytest
 from pathlib import Path
+from pyppl import config_plugins
+import pyppl_report
+config_plugins(pyppl_report)
+from pyppl import console
+from pyparam import commands
 HERE = Path(__file__).resolve().parent
-exe = str(HERE / 'pyppl_report')
-cmdy.chmod('+x', exe)
 
 @pytest.fixture
 def infile():
 	return HERE / 'rel_template.md'
 
+def run_report(**opts):
+	commands.report.filter.value = False
+	sys.argv = ['pyppl', 'report'] + sum([[('-' if len(key) == 1 else '--')  + key, str(val)] for key, val in opts.items()], [])
+	console.main()
+
 def test_avoid_input_overwriting(infile):
 	before = infile.read_text()
-	cmdy.pyppl_report(i = infile, _exe = exe, _fg = True)
+	run_report(i = infile)
 	assert infile.read_text() == before
 	assert infile.with_suffix('.tmp.md').exists()
 	assert infile.with_suffix('.html').exists()
@@ -19,27 +28,27 @@ def test_avoid_input_overwriting(infile):
 	infile.with_suffix('.html').unlink()
 
 def test_only_html_pdf(tmp_path, infile):
-	with pytest.raises(cmdy.CmdyReturnCodeException):
-		cmdy.pyppl_report(i = infile, o = str(tmp_path.with_suffix('.xyz')), _exe = exe, _fg = True)
+	with pytest.raises(ValueError):
+		run_report(i = infile, o = str(tmp_path.with_suffix('.xyz')))
 
 def test_pdf(tmp_path, infile):
 	outfile = tmp_path.with_suffix('.pdf')
-	cmdy.pyppl_report(i = infile, o = outfile, _exe = exe, _raise = True, _fg = True)
+	run_report(i = infile, o = outfile)
 	assert outfile.exists()
 
 def test_returncode(tmp_path, infile):
 	outfile = tmp_path.with_suffix('.pdf')
-	with pytest.raises(cmdy.CmdyReturnCodeException):
-		cmdy.pyppl_report(i = infile, o = outfile, _exe = exe, filter = '__notexist__', _raise = True, _fg = True)
+	with pytest.raises(SystemExit):
+		run_report(i = infile, o = outfile, filter = '__notexist__')
 
 def test_nonstand_pdf(tmp_path, infile):
 	outfile = tmp_path.with_suffix('.pdf')
-	with pytest.raises(cmdy.CmdyReturnCodeException):
-		cmdy.pyppl_report(i = infile, n = True, o = outfile, _exe = exe, _raise = True, _fg = True)
+	with pytest.raises(ValueError):
+		run_report(i = infile, n = True, o = outfile)
 
 def test_nonstand(tmp_path, infile):
 	outfile = tmp_path.with_suffix('.html')
-	cmdy.pyppl_report(i = infile, n = True, o = outfile, _exe = exe, _raise = True, _fg = True)
+	run_report(i = infile, n = True, o = outfile)
 	assert outfile.parent.joinpath('__common__.files').is_dir()
 	assert outfile.parent.joinpath('__common__.files').joinpath('css').is_dir()
 	assert outfile.parent.joinpath('__common__.files').joinpath('js').is_dir()
@@ -70,7 +79,7 @@ a2,2,2
 
 [Download filetable]({0} "file-download")
 '''.format(HERE/'filetable.txt'))
-	cmdy.pyppl_report(i = infile2, n = True, o = outfile2,  _exe = exe, _raise = True, _fg = True)
+	run_report(i = infile2, n = True, o = outfile2)
 	assert outfile2.with_suffix('.files').is_dir()
 	assert outfile2.with_suffix('.files').joinpath('filetable.txt').is_file()
 
