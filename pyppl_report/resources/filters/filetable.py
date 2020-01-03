@@ -23,36 +23,37 @@ import json
 import csv
 import re
 from pathlib import Path
-from hashlib import md5
-from shutil import copyfile
 import panflute as pf
 from nonstand import _copyfile
 
-def formatCell(text):
+def format_cell(text):
+	"""Format cell text"""
 	if len(text) < 10 or text.isdigit():
 		return pf.Plain(pf.Str(text))
 	try:
 		text = float(text)
-		if text > 0 and text < .001:
+		if 0 < text < .001:
 			return pf.Plain(pf.Str('%.3E' % text))
 		return pf.Plain(pf.Str('%.3f' % text))
 	except (ValueError, TypeError):
 		# transform links
 		elems = []
 		lastend = None
-		for m in re.finditer(r'\[(.+?)\]\((.+?)\)', text):
+		for matched in re.finditer(r'\[(.+?)\]\((.+?)\)', text):
 			if lastend is None:
-				elems.append(pf.Str(text[:m.start()]))
+				elems.append(pf.Str(text[:matched.start()]))
 			else:
-				elems.append(pf.Str(text[lastend:m.start()]))
-			elems.append(pf.Link(pf.Str(m.group(1)), url = m.group(2)))
-			lastend = m.end()
+				elems.append(pf.Str(text[lastend:matched.start()]))
+			elems.append(pf.Link(pf.Str(matched.group(1)), url = matched.group(2)))
+			lastend = matched.end()
 		if elems:
 			elems.append(pf.Str(text[lastend:]))
 			return pf.Plain(*elems)
 		return pf.Plain(pf.Str(text))
 
 def fenced_action(options, data, element, doc):
+	"""fenced action"""
+	# pylint: disable=too-many-locals,too-many-branches,too-many-statements
 	# We'll only run this for CodeBlock elements of class 'table'
 	caption     = options.get('caption', 'Untitled Table')
 	#caption     = [pf.Str(caption)]
@@ -77,13 +78,13 @@ def fenced_action(options, data, element, doc):
 		for i, row in enumerate(reader):
 			if nrows and i > nrows:
 				continue
-			cells = [	pf.TableCell(formatCell(x))
+			cells = [	pf.TableCell(format_cell(x))
 						for k, x in enumerate(row) if not ncols or k < ncols]
 			body.append(pf.TableRow(*cells))
 	finally:
 		f.close()
 
-	ncols = min(ncols, len(row)) if ncols else len(row)
+	ncols = min(ncols, len(row)) if ncols else len(row) # pylint:disable=undefined-loop-variable
 	if has_header:
 		header = body.pop(0)
 		if body and len(body[0].content) == len(header.content) + 1:
@@ -124,12 +125,12 @@ def fenced_action(options, data, element, doc):
 		header=header, caption=caption, width=width, alignment = align)
 	if dtargs is False:
 		return pf.Div(table, classes = ['tablewrapper'])
-	else:
-		return pf.Div(table, classes = ['tablewrapper', 'datatablewrapper'], attributes = {
+	return pf.Div(table, classes = ['tablewrapper', 'datatablewrapper'], attributes = {
 			'data-datatable': json.dumps(dtargs)
 		})
 
 def main(doc=None):
+	"""main function"""
 	return pf.run_filter(pf.yaml_filter, tag='table', function=fenced_action, doc=doc)
 
 if __name__ == '__main__':

@@ -11,7 +11,7 @@ def _copyfile(filepath, destfile):
 	if destfile.exists():
 		md5sum1 = md5(destfile.read_bytes()).hexdigest()
 		md5sum2 = md5(filepath.read_bytes()).hexdigest()
-		if (md5sum1 != md5sum2): # rename and copy file
+		if md5sum1 != md5sum2: # rename and copy file
 			candfiles = list(destfile.parent.glob("[[]*[]]" + destfile.name))
 			if not candfiles:
 				destfile = destfile.parent / ('[1]' + destfile.name)
@@ -25,6 +25,7 @@ def _copyfile(filepath, destfile):
 	return destfile
 
 def prepare(doc):
+	"""Prepare doc"""
 	mediadir = doc.get_metadata('mediadir')
 	doc.mediadir = Path(mediadir)
 
@@ -42,6 +43,7 @@ def prepare(doc):
 		_copyfile(cssfile, mediadir.joinpath('css', cssfile.name))
 
 def action(elem, doc):
+	"""action"""
 	# local image or local link for download
 	if  (isinstance(elem, pf.Image) and elem.url.startswith('/')) or \
 		(isinstance(elem, pf.Link) and elem.title == 'file-download'):
@@ -51,6 +53,7 @@ def action(elem, doc):
 		elem.url = str(destfile.relative_to(destfile.parent.parent))
 
 def main(doc=None):
+	"""main function"""
 	return pf.run_filter(action, prepare=prepare, doc=doc)
 
 if __name__ == '__main__':

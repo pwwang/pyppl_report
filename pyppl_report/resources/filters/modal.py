@@ -14,7 +14,8 @@ content of the modal
 
 into:
 
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="exampleModalCenter" tabindex="-1"
+	role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
 	<div class="modal-content">
 	  <div class="modal-header">
@@ -37,6 +38,7 @@ into:
 import panflute as pf
 
 def fenced_action(options, data, element, doc):
+	"""fenced action"""
 	modalid  = options.get('id', 'modal1')
 	title    = options.get('title')
 	closebtn = options.get('closebtn', True)
@@ -53,7 +55,11 @@ def fenced_action(options, data, element, doc):
 
 	components = []
 	if title:
-		modal_header1 = pf.Header(pf.Str(title), classes=['modal-title'], level=5, identifier=modalid + 'Title')
+		modal_header1 = pf.Header(
+			pf.Str(title),
+			classes=['modal-title'],
+			level=5,
+			identifier=modalid + 'Title')
 		modal_header2 = pf.Div(
 			pf.Div(pf.Para(pf.Str('x')), attributes = {'aria-hidden': "true"}),
 			classes = ['close', 'button'],
@@ -101,6 +107,7 @@ def action(elem, doc):
 		return fenced_action(dict(id = elem.identifier, **elem.attributes), elem.content, elem, doc)
 
 def main(doc=None):
+	"""main function"""
 	return pf.run_filter(action, doc=doc)
 
 if __name__ == '__main__':
