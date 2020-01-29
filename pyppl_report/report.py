@@ -1,6 +1,7 @@
 """Report generating system using pandoc"""
 import re
 from pathlib import Path
+from shutil import rmtree
 from cmdy import pandoc, wkhtmltopdf
 
 RESOURCE_DIR = Path(__file__).resolve().parent / 'resources'
@@ -149,6 +150,8 @@ class Report:
         srcpath = ['.', str(self.outfile.parent), str(Path(template).parent)]
         if not standalone:
             mediadir = self.outfile.with_suffix('.files')
+            if mediadir.is_dir():
+                rmtree(mediadir)
             metadata.extend(
                 ['mediadir=%s' % mediadir,
                  'template=%s' % template])

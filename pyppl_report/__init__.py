@@ -1,15 +1,17 @@
 """A report generating system for PyPPL"""
 import sys
 from time import time
+from hashlib import sha256
 from pathlib import Path
+import textwrap
 import toml
-from cmdy import CmdyReturnCodeException
-from diot import Diot
 from pyppl.plugin import hookimpl
 from pyppl.logger import logger
 from pyppl.jobmgr import STATES
-from pyppl.utils import fs, format_secs
+from pyppl.utils import fs, format_secs, filesig
 from pyppl.exception import ProcessAttributeError
+from diot import Diot, OrderedDiot
+from cmdy import CmdyReturnCodeException
 from .report import Report
 
 __version__ = "0.5.0"
@@ -66,20 +68,37 @@ def proc_init(proc):
 def proc_postrun(proc, status):
     """Generate report for the process"""
     # skip if process failed or cached
-    # pylint: disable=too-many-locals
+    # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     report_file = proc.workdir.joinpath('proc.report.md')
     template = proc.config.report_template
+    template_file = None
+    if template and template.startswith('file:'):
+        template_file = Path(template[5:])
+        logger.debug("Using report template: %s", template_file, proc=proc.id)
 
-    if not template or status == 'failed' or (status == 'cached'
-                                              and report_file.is_file()):
+    if not template and report_file.is_file():
+        report_file.unlink()
+
+    if not template or status == 'failed':
         return
+
+    signature = OrderedDiot([(key, value)
+                             for key, value in sorted(proc.config.items())
+                             if key.startswith('report_')])
+    if template_file and template_file.is_file():
+        signature.template = filesig(template_file)
+    signature = sha256(toml.dumps(signature).encode()).hexdigest()
+
+    if status == 'cached' and report_file.is_file():
+        with report_file.open() as frpt:
+            if frpt.readline().strip() == '<!--- %s -->' % signature:
+                logger.debug("Report markdown file cached, skip.", proc=proc.id)
+                return
 
     fs.remove(report_file)
     logger.debug('Rendering report template ...', proc=proc.id)
-    if template.startswith('file:'):
-        tplfile = Path(template[5:])
-        logger.debug("Using report template: %s", tplfile, proc=proc.id)
-        template = tplfile.read_text()
+    if template_file:
+        template = template_file.read_text()
 
     template = proc.template(template, **proc.envs)
     rptdata = dict(jobs=[None] * proc.size, proc=proc, args=proc.args)
@@ -119,9 +138,13 @@ def proc_postrun(proc, status):
             codeblock = len(line) - len(line.lstrip('`'))
 
     report_file.write_text(
-        proc.template(rptenvs.pre, **proc.envs).render(rptdata) + '\n\n' +
+        '<!--- %s -->' % signature +
+        proc.template(textwrap.dedent(rptenvs.pre),
+                      **proc.envs).render(rptdata) + '\n\n' +
         '\n'.join(reportmd) + '\n\n' +
-        proc.template(rptenvs.post, **proc.envs).render(rptdata) + '\n')
+        proc.template(textwrap.dedent(rptenvs.post),
+                      **proc.envs).render(rptdata) + '\n'
+    )
 
 
 def report(ppl, # pylint: disable=too-many-arguments
@@ -149,25 +172,34 @@ def report(ppl, # pylint: disable=too-many-arguments
         outfile = Path('.').joinpath(default_basename)
     elif Path(outfile).is_dir():
         outfile = Path(outfile).joinpath(default_basename)
+    else:
+        outfile = Path(outfile)
 
     logger.report('Generating report using pandoc ...')
     reports = [
         proc.workdir.joinpath('proc.report.md') for proc in ppl.procs
         if proc.workdir.joinpath('proc.report.md').exists()
     ]
-    # force to add a title.
-    title = title or '# Reports for ' + ppl.name + ' pipeline'
-    title = '# ' + title if not title.startswith('#') else title
-    cmd = Report(reports, outfile, title).generate(standalone, template,
-                                                   filters)
-    try:
-        logger.debug('Running: ' + cmd.cmd)
-        cmd.run()
-        logger.report('Report generated: %s', outfile)
-        logger.report('Time elapsed: %s', format_secs(time() - timer))
-    except CmdyReturnCodeException as ex:
-        logger.error(str(ex))
-        sys.exit(1)
+    # see if it is cached:
+    if (outfile.is_file()
+            and outfile.stat().st_mtime >= max(rptmd.stat().st_mtime
+                                               for rptmd in reports)):
+        logger.report('Report cached: %s', outfile)
+    else:
+        # force to add a title.
+        title = title or '# Reports for ' + ppl.name + ' pipeline'
+        title = '# ' + title if not title.startswith('#') else title
+        cmd = Report(reports, outfile, title).generate(standalone,
+                                                       template,
+                                                       filters)
+        try:
+            logger.debug('Running: ' + cmd.cmd)
+            cmd.run()
+            logger.report('Report generated: %s', outfile)
+            logger.report('Time elapsed: %s', format_secs(time() - timer))
+        except CmdyReturnCodeException as ex:
+            logger.error(str(ex))
+            sys.exit(1)
 
 
 @hookimpl
