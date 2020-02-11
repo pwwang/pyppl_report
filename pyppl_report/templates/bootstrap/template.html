@@ -22,7 +22,7 @@ $endif$
 
 <body data-spy="scroll" data-target="#pyppl-report-toc" data-offset="0">
 <header class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar" id="pyppl-report-header">
-  <div id="pyppl-report-title" class="mr-0 mr-md-2">${pagetitle}</div>
+  <div id="pyppl-report-title" class="mr-0 mr-md-2">$pagetitle$</div>
   <div class="navbar-nav ml-md-auto"></div>
   $if(toc)$
   <a class="mb-3 mb-md-0 ml-md-3"
@@ -58,7 +58,7 @@ $endif$
 </div>
 <script type="text/javascript">
   window.metadata = {};
-  window.metadata.toc = $if(toc)$ ${toc} $else$ 0 $endif$;
+  window.metadata.toc = $if(toc)$ $toc$ $else$ 0 $endif$;
   window.metadata.pdf = $if(pdf)$ true $else$ false $endif$;
 </script>
 <script src="static/jquery.min.js"></script>

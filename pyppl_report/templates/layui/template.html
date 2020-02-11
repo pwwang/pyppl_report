@@ -30,7 +30,7 @@ $if(toc)$
     href="javascript:void(0);"></a>
 $endif$
 <div class="layui-header layui-row" id="pyppl-report-header">
-  <div id="pyppl-report-title" class="layui-col-md12">${pagetitle}</div>
+  <div id="pyppl-report-title" class="layui-col-md12">$pagetitle$</div>
 </div>
 <div class="layui-body" id="pyppl-report-main">
 
@@ -54,7 +54,7 @@ $endif$
 </div>
 <script type="text/javascript">
   window.metadata = {};
-  window.metadata.toc = $if(toc)$ ${toc} $else$ 0 $endif$;
+  window.metadata.toc = $if(toc)$ $toc$ $else$ 0 $endif$;
   window.metadata.pdf = $if(pdf)$ true $else$ false $endif$;
 </script>
 <script src="static/jquery.min.js"></script>

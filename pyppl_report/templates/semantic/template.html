@@ -24,7 +24,7 @@ $endif$
 <div class="pusher">
   <div class="full height main ui container" id="pyppl-report-container">
     <div class="article" id="pyppl-report-main">
-      <div class="pagetitle">${pagetitle}</div>
+      <div class="pagetitle">$pagetitle$</div>
       ${body}
 
       <div class="ui  vertical footer segment">
@@ -46,7 +46,7 @@ $endif$
 </div>
 <script type="text/javascript">
   window.metadata = {};
-  window.metadata.toc = $if(toc)$ ${toc} $else$ 0 $endif$;
+  window.metadata.toc = $if(toc)$ $toc$ $else$ 0 $endif$;
   window.metadata.pdf = $if(pdf)$ true $else$ false $endif$;
 </script>
 <script src="static/jquery.min.js"></script>
