@@ -6,7 +6,7 @@ If you want some headings to be excluded from TOC, you just do:
 
 ```markdown
 ## Exluded {toc=false}
-xyb
+whatever
 ```
 
 Following heading will be excluded:
