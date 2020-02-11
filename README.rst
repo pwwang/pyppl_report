@@ -141,9 +141,12 @@ Then in your template, you can use it:
 
    ## {{jobs[0].description}}
 
-Built-in themes
----------------
+Built-in templates
+------------------
 
-`Bootstrip <https://pwwang.github.io/pyppl_report/bootstrap.html>`_
-`Layui <https://pwwang.github.io/pyppl_report/layui.html>`_
-`Semantic <https://pwwang.github.io/pyppl_report/semantic.html>`_
+Check them to see features those templates support:
+
+
+* `Layui <https://pwwang.github.io/pyppl_report/layui.html>`_
+* `Bootstrip <https://pwwang.github.io/pyppl_report/bootstrap.html>`_
+* `Semantic <https://pwwang.github.io/pyppl_report/semantic.html>`_

@@ -182,9 +182,9 @@ However, when it works as a CLI tool, relative path may be used.
 A set of panels are blocks that only occupy one panel space in the page by using tabs or accordions,
 based on the number of this set of panels.
 
-## Auto-decide to use tabs or accordions
+## Auto-decision to use tabs or accordions
 
-When number of panels <= 4 we will use tabs, otherwise accordions are used.
+When number of panels <= `4` we will use tabs, otherwise accordions are used.
 
 ```markdown
 ::: {.panel head=Panel1}
@@ -203,6 +203,11 @@ panel1
 
 ::: {.panel head=Panel2}
 panel2
+:::
+
+::: {.admon .note}
+A collection of `panel`s will be automatically formed a tab or accordion sets. However, they
+have to be adjacent. Otherwise, they will be built as separate sets of tabs or accordions.
 :::
 
 ## Accordions

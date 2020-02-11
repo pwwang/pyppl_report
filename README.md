@@ -95,11 +95,13 @@ Then in your template, you can use it:
 ## {{jobs[0].description}}
 ```
 
-## Built-in themes
+## Built-in templates
 
-[Bootstrip](https://pwwang.github.io/pyppl_report/bootstrap.html)
-[Layui](https://pwwang.github.io/pyppl_report/layui.html)
-[Semantic](https://pwwang.github.io/pyppl_report/semantic.html)
+Check them to see features those templates support:
+
+- [Layui](https://pwwang.github.io/pyppl_report/layui.html)
+- [Bootstrip](https://pwwang.github.io/pyppl_report/bootstrap.html)
+- [Semantic](https://pwwang.github.io/pyppl_report/semantic.html)
 
 
 [1]: https://github.com/pwwang/PyPPL

@@ -1949,8 +1949,8 @@ display: inline-block;
       </div>
       <h1 id="panels">Panels</h1>
       <p>A set of panels are blocks that only occupy one panel space in the page by using tabs or accordions, based on the number of this set of panels.</p>
-      <h2 id="auto-decide-to-use-tabs-or-accordions">Auto-decide to use tabs or accordions</h2>
-      <p>When number of panels &lt;= 4 we will use tabs, otherwise accordions are used.</p>
+      <h2 id="auto-decision-to-use-tabs-or-accordions">Auto-decision to use tabs or accordions</h2>
+      <p>When number of panels &lt;= <code>4</code> we will use tabs, otherwise accordions are used.</p>
       <div class="sourceCode" id="cb10"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1"></a>::: {.panel head=Panel1}</span>
       <span id="cb10-2"><a href="#cb10-2"></a>panel1</span>
       <span id="cb10-3"><a href="#cb10-3"></a>:::</span>
@@ -1963,6 +1963,9 @@ display: inline-block;
       </div>
       <div class="panel" data-head="Panel2">
       <p>panel2</p>
+      </div>
+      <div class="admon note">
+      <p>A collection of <code>panel</code>s will be automatically formed a tab or accordion sets. However, they have to be adjacent. Otherwise, they will be built as separate sets of tabs or accordions.</p>
       </div>
       <h2 id="accordions">Accordions</h2>
       <div class="panel" data-head="Panel1">

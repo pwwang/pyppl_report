@@ -79,5 +79,6 @@ repos:
         entry: pytest
         language: system
         args: [tests/]
+        exclude: ^tests/data/test.md$
         pass_filenames: false
         files: ^tests/.+$|^pyppl_report/.+$
