@@ -68,7 +68,7 @@ repos:
                           --title "Bootstrap template for pyppl_report"
                           --template bootstrap
         language: system
-        files: ^tests/data/test.md|^pyppl_report/$
+        files: ^tests/data/|^pyppl_report/$
         pass_filenames: false
     -   id: gendoclayui
         name: "Generate layui docs"
@@ -79,7 +79,7 @@ repos:
                           --title "Layui template for pyppl_report"
                           --template layui
         language: system
-        files: ^tests/data/test.md|^pyppl_report/$
+        files: ^tests/data/|^pyppl_report/$
         pass_filenames: false
     -   id: gendocsemantic
         name: "Generate semantic docs"
@@ -90,5 +90,5 @@ repos:
                           --title "Senmantic template for pyppl_report"
                           --template semantic
         language: system
-        files: ^tests/data/test.md|^pyppl_report/$
+        files: ^tests/data/|^pyppl_report/$
         pass_filenames: false
