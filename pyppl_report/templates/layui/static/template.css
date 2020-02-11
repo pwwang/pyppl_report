@@ -200,7 +200,7 @@ h2 {
     margin: 18px 0px 8px 0px;
 }
 
-p {line-height: 20px;}
+p {line-height: 20px; margin: 8px 0;}
 
 /** admonition */
 .admon {
