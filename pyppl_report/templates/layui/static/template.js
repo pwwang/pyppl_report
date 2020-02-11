@@ -55,7 +55,7 @@
             sort = null
         }
         var cols = headers.map(header => ({
-            sort: true, field: header, title: header, width: 'auto'
+            sort: true, field: header, title: header
         }));
 
         // add download
@@ -82,6 +82,7 @@
             limit: pagesize,
             title: caption,
             initSort: sort,
+            cellMinWidth: 80,
             defaultToolbar: defaultToolbar,
             toolbar: true,
             skin: {size: 'sm', even: true},
@@ -94,10 +95,6 @@
                 return ret;
             })
         });
-
-        // adjust the width for header and table cells
-        // since table does not support auto width
-
 
         // add caption
         $("div[lay-id="+ tableid +"] .layui-table-tool-temp")
