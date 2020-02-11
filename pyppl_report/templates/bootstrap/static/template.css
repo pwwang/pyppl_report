@@ -343,3 +343,7 @@ figure .img-tag {
 .modal-content{
 	top: 28px;
 }
+
+.pyppl-report-reference {
+    display: block;
+}

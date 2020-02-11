@@ -235,3 +235,7 @@ figure .img-tag {
 	cursor: pointer;
 	background-color: white;
 }
+
+.pyppl-report-reference {
+    display: block;
+}

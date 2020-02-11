@@ -41,25 +41,6 @@ repos:
         language: system
         files: pyproject.toml
         pass_filenames: false
-    -   id: pytest
-        name: Run pytest
-        entry: pytest
-        language: system
-        args: [tests/]
-        pass_filenames: false
-        files: ^tests/.+$|^pyppl_report/.+$
-    -   id: genedocindex
-        name: "Generate docs using README.md"
-        entry: >
-          pyppl report -i README.md
-                       -o docs/index.html
-                       -n false
-                       --toc 0
-                       --title "Documentation for pyppl_report"
-                       --template layui
-        language: system
-        files: ^README.md$
-        pass_filenames: false
     -   id: gendocbootstrip
         name: "Generate bootstrip docs"
         entry: >
@@ -93,3 +74,10 @@ repos:
         language: system
         files: ^tests/data/|^pyppl_report/
         pass_filenames: false
+    -   id: pytest
+        name: Run pytest
+        entry: pytest
+        language: system
+        args: [tests/]
+        pass_filenames: false
+        files: ^tests/.+$|^pyppl_report/.+$

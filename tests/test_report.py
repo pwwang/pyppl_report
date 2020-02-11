@@ -183,10 +183,10 @@ Some repeated results[[2]]
         '<p>Some other results<a href="#PYPPL-REF-4" class="pyppl-report-refindex">[4]</a></p>',
         '<p>Some repeated results<a href="#PYPPL-REF-2" class="pyppl-report-refindex">[2]</a></p>',
         '<h1 id="reference">Reference</h1>',
-        '[1]: <a href class="pyppl-report-reference" name="PYPPL-REF-1">paper1</a>',
-        '[2]: <a href class="pyppl-report-reference" name="PYPPL-REF-2">paper2</a>',
-        '[3]: <a href class="pyppl-report-reference" name="PYPPL-REF-3">paper3</a>',
-        '[4]: <a href class="pyppl-report-reference" name="PYPPL-REF-4">paper4</a>',
+        '<a href class="pyppl-report-reference" name="PYPPL-REF-1">[1]: paper1</a>',
+        '<a href class="pyppl-report-reference" name="PYPPL-REF-2">[2]: paper2</a>',
+        '<a href class="pyppl-report-reference" name="PYPPL-REF-3">[3]: paper3</a>',
+        '<a href class="pyppl-report-reference" name="PYPPL-REF-4">[4]: paper4</a>',
     )
 
 ## Test report.py

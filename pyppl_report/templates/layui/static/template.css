@@ -335,3 +335,11 @@ li {
 .layui-nav .layui-nav-more {
     border-top-color: #666;
 }
+
+.pyppl-report-reference {
+    display: block;
+}
+
+ul > li > p {
+    display: inline-block;
+}

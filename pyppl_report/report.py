@@ -101,7 +101,7 @@ class Report:
                 fmd.write('# Reference\n')
                 for cite, index in sorted(citations.items(),
                                           key=lambda item: int(item[1])):
-                    fmd.write('[{i}]: [{cite}](){{.pyppl-report-reference '
+                    fmd.write('[[{i}]: {cite}](){{.pyppl-report-reference '
                               'name=PYPPL-REF-{i}}}'.format(
                                   i=index, cite=b64decode(cite).decode()
                               ))

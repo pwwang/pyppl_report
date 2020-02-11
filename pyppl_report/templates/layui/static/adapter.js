@@ -97,7 +97,7 @@
         if (link.is('.pyppl-report-reference')) {
             link.attr('href',
                       'https://scholar.google.com/scholar?q=' +
-                        escape(link.text()));
+                      escape(link.text().split(/:\s*(.+)/)[1]));
         }
         var href = link.attr('href');
         // exclude anchor links as well
