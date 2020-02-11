@@ -59,7 +59,7 @@ repos:
         language: system
         files: ^README.md$
         pass_filenames: false
-    -   id: genedocbootstrip
+    -   id: gendocbootstrip
         name: "Generate bootstrip docs"
         entry: >
           pyppl report -i tests/data/test.md
@@ -70,7 +70,7 @@ repos:
         language: system
         files: ^tests/data/test.md|^pyppl_report/$
         pass_filenames: false
-    -   id: genedoclayui
+    -   id: gendoclayui
         name: "Generate layui docs"
         entry: >
           pyppl report -i tests/data/test.md
@@ -81,7 +81,7 @@ repos:
         language: system
         files: ^tests/data/test.md|^pyppl_report/$
         pass_filenames: false
-    -   id: genedocsemantic
+    -   id: gendocsemantic
         name: "Generate semantic docs"
         entry: >
           pyppl report -i tests/data/test.md

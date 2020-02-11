@@ -24,7 +24,7 @@ def _replace_all(regex, callback, string):
 
 def _replace_ref_index(matched, citations):
     """citations: index => ref"""
-    index = matched[1:-1]
+    index = matched[2:-2]
     if index in citations:
         return '[#REF: %s #]' % citations[index]
     return matched
@@ -56,7 +56,7 @@ class ProcReport:  # pylint: disable=too-few-public-methods
             line = line.rstrip('\n')
             # [1]: reference 1
             # [2]: reference 2
-            matched = re.match(r'\[(\d+)\]: (.+)', line)
+            matched = re.match(r'\[\[(\d+)\]\]: (.+)', line)
             if not matched:
                 source.append(line)
                 continue
@@ -65,7 +65,7 @@ class ProcReport:  # pylint: disable=too-few-public-methods
             ).decode()
 
         source = '\n'.join(source) if source else ''
-        self.source = _replace_all(r'\[\d+\]',
+        self.source = _replace_all(r'\[\[\d+\]\]',
                                    partial(_replace_ref_index,
                                            citations=citations),
                                    source)
@@ -133,12 +133,14 @@ class Report:
         ]
         if toc > 0:
             metadata.append('toc=%d' % toc)
-        srcpath = ['.', str(self.outfile.parent), str(Path(template).parent)]
         mediadir = self.outfile.with_suffix('.files')
+        srcpath = ['.', str(self.outfile.parent), str(mediadir),
+                   str(Path(template).parent)]
+        # add input directory
+        srcpath += [str(self.reports[0].rptfile.parent)] if self.reports else []
         if mediadir.is_dir():
             rmtree(mediadir)
         metadata.extend(['mediadir=%s' % mediadir, 'template=%s' % template])
-        srcpath.insert(2, str(mediadir))
 
         if not standalone:
             # copy files to dir relative to the output file

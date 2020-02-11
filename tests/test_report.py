@@ -150,27 +150,27 @@ def test_pandoc_cmderror(proc, tmp_path):
 def test_citations(proc, reportfile, tmp_path):
     proc.config.report_template = '''
 # Title
-Some results[1]
+Some results[[1]]
 
-Some[8] reports[2]
+Some[8] reports[[2]]
 
 ## Appendix
-Some more results[3]
+Some more results[[3]]
 
-[1]: paper1
-[2]: paper2
-[3]: paper3
+[[1]]: paper1
+[[2]]: paper2
+[[3]]: paper3
 '''
     p3 = Proc(input = {'a:var':[0]}, output = 'a:var:0', ppldir = tmp_path/'workdir')
     p3.depends = proc
     p3.config.report_template = '''
 # Title2
-Some other results[1]
+Some other results[[1]]
 
-Some repeated results[2]
+Some repeated results[[2]]
 
-[1]: paper4
-[2]: paper2
+[[1]]: paper4
+[[2]]: paper2
 '''
     PyPPL(forks=5).start(proc).run().report(outfile = reportfile)
     assert_in_file(reportfile,

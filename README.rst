@@ -94,6 +94,35 @@ Generating report
    PyPPL(name='Awesome-pipeline').start(pPyClone).run().report('/path/to/')
    # report generated at ./Awesome-pipeline.report.html
 
+Command line tool:
+
+.. code-block:: shell
+
+   > pyppl report
+   Description:
+     Convert a Markdown file to report.
+
+   Usage:
+     pyppl report --in <LIST> [OPTIONS]
+
+   Required options:
+     -i, --in <LIST>           - The input file.
+
+   Optional options:
+     -o, --out <AUTO>          - The output file. Default: <in>.html
+     -n, --nonstand [BOOL]     - Non-standalone mode. Save static files in  <filename of --out>.files  separately. \
+                                 Default: False
+         --filter <LIST>       - The filters for pandoc Default: []
+         --toc <INT>           - The depth of heading levels to put in TOC. 0 to disable. Default: 3
+         --title <STR>         - The title of the document.
+                                 If the first element of the document is H1 (#), this will be ignored \
+                                 and the text of H1 will be used as title.
+                                 If the title is specified as "# Title", then a title will be added \
+                                 anyway. Default: Untitled document
+         --template <STR>      - The template to use. Either standard template name or full path to \
+                                 template file. Default: bootstrap
+     -h, -H, --help            - Show help message and exit.
+
 Extra data for rendering
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -111,11 +140,6 @@ Then in your template, you can use it:
 .. code-block:: markdown
 
    ## {{jobs[0].description}}
-
-References
-^^^^^^^^^^
-
-We use ``[1]``\ , ``[2]`` ... to link to the references, so HTML links have to be in-place (in the format of ``[text](link)`` instead of ``[text][link-index]``\ ). All references from different processes will be re-ordered and combined.
 
 Built-in themes
 ---------------

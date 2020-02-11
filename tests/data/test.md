@@ -112,14 +112,19 @@ ID,Name,Sex,Age
 
 # References/Links
 
-- Something needs ref [1]
+- Something needs ref [[1]]
 ```markdown
-    - Something needs ref [l]
+    - Something needs ref [[ 1 ]] <!--- No space in real case  -->
+
+    - Another statement needs ref [[ 2 ]]
 
     ... ...
 
-    [l]: ref1
+    [[1]]: ref1
+    [[2]]: ref2
 ```
+- Another statement needs ref [[2]]
+
 - [A link with attributes](somelink "title"){a=1 b=2 c="xy" d=False f="m, n"}
 ```markdown
 [A link with attributes](somelink "title"){a=1 b=2 c="xy" d=False f="m, n"}
@@ -353,4 +358,5 @@ panel2
 :::
 ```
 
-[1]: ref1
+[[1]]: ref1
+[[2]]: ref2
