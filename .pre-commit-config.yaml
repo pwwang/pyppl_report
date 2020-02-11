@@ -47,3 +47,9 @@ repos:
         args: [tests/]
         pass_filenames: false
         files: ^tests/.+$|^pyppl_report/.+$
+    -   id: generatedocs
+        name: "Generate docs using README.md and tests/data/test.md"
+        entry: pytest -k test_templates -s
+        language: system
+        files: ^README.md|tests/data/test.md$
+        pass_filenames: false

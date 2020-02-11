@@ -73,13 +73,18 @@ a[download="true"] {
 }
 
 #toc-controller {
-    font-size: 20px;
-    line-height: 60px;
+    /* font-size: 20px; */
+    /* line-height: 60px; */
     color: white;
-    border-color: white;
-    border: 1px solid white;
-    padding: 4px;
+    /* border-color: white; */
+    border: 1px solid #331c1c;
+    padding: 5px;
     cursor: pointer;
+    position: absolute;
+    background-color: white;
+    left: 20px;
+    bottom: 30px;
+    z-index: 2099;
 }
 
 figure {

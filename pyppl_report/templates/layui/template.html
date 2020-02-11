@@ -6,6 +6,9 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <link rel="stylesheet" type="text/css" href="static/css/layui.css" />
+  <link rel="stylesheet" type="text/css" href="static/css/modules/laydate/default/laydate.css" />
+  <link rel="stylesheet" type="text/css" href="static/css/modules/layer/default/layer.css" />
+  <link rel="stylesheet" type="text/css" href="static/css/modules/code.css" />
   <link rel="stylesheet" type="text/css" href="static/template.css" />
   <meta name="generator" content="pandoc" />
 
@@ -20,16 +23,14 @@ $endif$
 </head>
 
 <body>
+$if(toc)$
+<a class="layui-icon-left layui-icon layui-circle layui-bg-black"
+    id="toc-controller"
+    title="Toggle sidebar"
+    href="javascript:void(0);"></a>
+$endif$
 <div class="layui-header layui-row" id="pyppl-report-header">
-  <div id="pyppl-report-title" class="layui-col-md11">${pagetitle}</div>
-  $if(toc)$
-  <div class="layui-col-md1">
-    <a class="layui-icon-left layui-icon layui-circle layui-bg-gray"
-       id="toc-controller"
-       title="Toggle sidebar"
-       href="javascript:void(0);"></a>
-  </div>
-  $endif$
+  <div id="pyppl-report-title" class="layui-col-md12">${pagetitle}</div>
 </div>
 <div class="layui-body" id="pyppl-report-main">
 

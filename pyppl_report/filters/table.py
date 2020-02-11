@@ -58,7 +58,6 @@ def fenced_action(options, data, element, doc):
     nrows += 1 if nrows and has_header else 0
 
     csvargs = options.get('csvargs', {})
-    pf.debug(options)
     csvargs['dialect'] = csvargs.get('dialect', "unix")
     csvargs['delimiter'] = csvargs.get('delimiter',
                                        "\t").encode().decode('unicode_escape')
