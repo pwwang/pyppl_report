@@ -108,19 +108,19 @@ def test_copyfile(tmp_path):
 
 # generate documents
 
-def test_templates():
+def test_templates(tmp_path):
     run_report(i = HERE/'data/test.md', n = False,
-               o = HERE/'../docs/bootstrap.html',
+               o = tmp_path/'bootstrap.html',
                title='Bootstrap template for pyppl_report',
                template='bootstrap')
     run_report(i = HERE/'data/test.md', n = False,
-               o = HERE/'../docs/layui.html',
+               o = tmp_path/'layui.html',
                title='Layui template for pyppl_report',
                template='layui')
     run_report(i = HERE/'data/test.md', n = False,
-               o = HERE/'../docs/semantic.html',
+               o = tmp_path/'semantic.html',
                title='Semantic template for pyppl_report',
                template='semantic')
 
     run_report(i = HERE/'../README.md', title='Documentation for pyppl_report',
-               templtae='semantic', toc=0, o = HERE/'../docs/index.html')
+               templtae='semantic', toc=0, o = tmp_path/'index.html')
