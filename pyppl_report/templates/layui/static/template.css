@@ -283,9 +283,13 @@ p {line-height: 20px; margin: 8px 0;}
     color: #651fff;
 }
 
-li {
-    list-style-position: inside;
+ul > li {
+    list-style-position: outside;
     list-style-type: square;
+}
+
+ul:not(.layui-nav) {
+    margin-left: 20px;
 }
 
 .layui-nav-tree a {

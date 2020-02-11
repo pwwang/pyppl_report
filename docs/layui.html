@@ -1779,9 +1779,12 @@ background-color: rgba(101,31,255,.1);
 .admon.example i {
 color: #651fff;
 }
-li {
-list-style-position: inside;
+ul > li {
+list-style-position: outside;
 list-style-type: square;
+}
+ul:not(.layui-nav) {
+margin-left: 20px;
 }
 .layui-nav-tree a {
 color: rgb(46, 46, 46) !important;
