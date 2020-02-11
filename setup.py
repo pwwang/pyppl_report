@@ -32,17 +32,41 @@ setup(
     author_email='pwwang@pwwang.com',
     license='MIT',
     entry_points={"pyppl": ["pyppl_report = pyppl_report"]},
-    packages=['pyppl_report'],
+    packages=['pyppl_report', 'pyppl_report.filters'],
     package_dir={"": "."},
     package_data={
         "pyppl_report": [
-            "*.bak", "resources/templates/bootstrap/*.html",
-            "resources/templates/bootstrap/static/*.css",
-            "resources/templates/bootstrap/static/*.js"
+            "*.bak", "templates/bootstrap/*.html",
+            "templates/bootstrap/static/*.css",
+            "templates/bootstrap/static/*.js", "templates/layui/*.html",
+            "templates/layui/static/*.css", "templates/layui/static/*.js",
+            "templates/layui/static/css/*.css",
+            "templates/layui/static/css/modules/*.css",
+            "templates/layui/static/css/modules/laydate/default/*.css",
+            "templates/layui/static/css/modules/layer/default/*.css",
+            "templates/layui/static/css/modules/layer/default/*.gif",
+            "templates/layui/static/css/modules/layer/default/*.png",
+            "templates/layui/static/font/*.eot",
+            "templates/layui/static/font/*.svg",
+            "templates/layui/static/font/*.ttf",
+            "templates/layui/static/font/*.woff",
+            "templates/layui/static/font/*.woff2",
+            "templates/layui/static/images/face/*.gif",
+            "templates/layui/static/lay/*.js",
+            "templates/layui/static/lay/modules/*.js",
+            "templates/layui/static/lay/modules/mobile/*.js",
+            "templates/semantic/*.html", "templates/semantic/static/*.css",
+            "templates/semantic/static/*.js",
+            "templates/semantic/static/themes/default/assets/fonts/*.eot",
+            "templates/semantic/static/themes/default/assets/fonts/*.svg",
+            "templates/semantic/static/themes/default/assets/fonts/*.ttf",
+            "templates/semantic/static/themes/default/assets/fonts/*.woff",
+            "templates/semantic/static/themes/default/assets/fonts/*.woff2",
+            "templates/semantic/static/themes/default/assets/images/*.png"
         ]
     },
     install_requires=[
-        'cmdy', 'panflute==1.11.*', 'pyppl', 'toml==0.*,>=0.10.0'
+        'cmdy', 'liquidpy', 'panflute==1.11.*', 'pyppl', 'toml==0.*,>=0.10.0'
     ],
     extras_require={"dev": ["pyparam", "pytest", "pytest-cov"]},
 )

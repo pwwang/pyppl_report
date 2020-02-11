@@ -1,0 +1,97 @@
+	Quality	Age	Sex	Memo
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	<pure link: https://google.com>
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	[pure link](https://google.com)
+P3	-1.11213177e-10	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	[pure link](https://google.com)
+P3	-1.11213177E-2	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	[pure link](https://google.com)
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	<pure link: https://google.com>
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	[pure link](https://google.com)
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	[pure link](https://google.com)
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	[pure link](https://google.com)
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	<pure link: https://google.com>
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	[pure link](https://google.com)
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	[pure link](https://google.com)
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	[pure link](https://google.com)
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	<pure link: https://google.com>
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	[pure link](https://google.com)
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	[pure link](https://google.com)
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text
+P1	100	30	1	a [some link](https://google.com) b
+P2	80	29	2	[pure link](https://google.com)
+P3	-1.11213177	31	1	not a link
+P4	.3845	32	2	just a text
+P5	.00001111111	34	1	a [some link](https://google.com) b [another link](https://google.com) c
+P6	1	22	1	text

@@ -44,7 +44,7 @@ def report_template_converter(value):
 def setup(config):
     """Setup the plugin"""
     config.config.report_template = ''
-    config.config.report_envs = Diot(level=2, pre='', post='')
+    config.config.report_envs = Diot(level=1, pre='', post='')
 
 
 @hookimpl
@@ -112,7 +112,7 @@ def proc_postrun(proc, status):
             with datafile.open() as fdata:
                 rptdata['jobs'][i].update(toml.load(fdata))
 
-    rptenvs = Diot(level=2, pre='', post='', title=proc.desc)
+    rptenvs = Diot(level=1, pre='', post='', title=proc.desc)
     rptenvs.update(proc.config.report_envs)
     rptdata['report'] = rptenvs
     try:
@@ -123,11 +123,7 @@ def proc_postrun(proc, status):
     reportmd = reportmd.splitlines()
 
     codeblock = False
-    appendix = False
     for i, line in enumerate(reportmd):
-        if line.startswith('## Appendix') or appendix:
-            appendix = True
-            continue
         if line.startswith('#') and not codeblock:
             reportmd[i] = '#' * (rptenvs.level - 1) + line
         elif codeblock:
@@ -146,13 +142,13 @@ def proc_postrun(proc, status):
                       **proc.envs).render(rptdata) + '\n'
     )
 
-
 def report(ppl, # pylint: disable=too-many-arguments
            outfile=None,
            title=None,
            standalone=True,
            template=False,
-           filters=False):
+           filters=False,
+           toc=3):
     """@API
     Generate report for the pipeline.
     Currently only HTML format supported.
@@ -180,18 +176,20 @@ def report(ppl, # pylint: disable=too-many-arguments
         proc.workdir.joinpath('proc.report.md') for proc in ppl.procs
         if proc.workdir.joinpath('proc.report.md').exists()
     ]
+
     # see if it is cached:
     if (outfile.is_file()
+            and reports
             and outfile.stat().st_mtime >= max(rptmd.stat().st_mtime
                                                for rptmd in reports)):
         logger.report('Report cached: %s', outfile)
     else:
         # force to add a title.
-        title = title or '# Reports for ' + ppl.name + ' pipeline'
-        title = '# ' + title if not title.startswith('#') else title
+        title = title or 'Reports for ' + ppl.name + ' pipeline'
         cmd = Report(reports, outfile, title).generate(standalone,
                                                        template,
-                                                       filters)
+                                                       filters,
+                                                       toc)
         try:
             logger.debug('Running: ' + cmd.cmd)
             cmd.run()
@@ -231,6 +229,8 @@ def cli_addcmd(commands):
     params.n = params.nonstand
     params.filter = []
     params.filter.desc = 'The filters for pandoc'
+    params.toc = 3
+    params.toc.desc = 'The depth of heading levels to put in TOC. 0 to disable.'
     params.title = 'Untitled document'
     params.title.desc = ['The title of the document.',
                          'If the first element of the document is H1 (#), '
@@ -250,7 +250,7 @@ def cli_execcmd(command, opts):
     if command == 'report':
         cmd = Report(opts.i, opts.o,
                      opts.title).generate(not opts.nonstand, opts.template,
-                                          opts.filter)
+                                          opts.filter, opts.toc)
         try:
             logger.info('Running: ' + cmd.pipedcmd)
             cmd.run()

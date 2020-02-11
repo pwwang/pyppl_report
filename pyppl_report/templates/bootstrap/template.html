@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <link rel="stylesheet" type="text/css" href="static/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="static/datatables.min.css" />
+  <link rel="stylesheet" type="text/css" href="static/template.css" />
+  <meta name="generator" content="pandoc" />
+
+  <title>$pagetitle$</title>
+$if(pdf)$
+  <style type="text/css">
+    thead { display: table-header-group; }
+    tfoot { display: table-row-group; }
+    tr { page-break-inside: avoid; }
+  </style>
+$endif$
+</head>
+
+<body data-spy="scroll" data-target="#pyppl-report-toc" data-offset="0">
+<header class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar" id="pyppl-report-header">
+  <div id="pyppl-report-title" class="mr-0 mr-md-2">${pagetitle}</div>
+  <div class="navbar-nav ml-md-auto"></div>
+  $if(toc)$
+  <a class="mb-3 mb-md-0 ml-md-3"
+      id="toc-controller"
+      title="Toggle sidebar"
+      href="javascript:void(0);">Hide sidebar</a>
+  $endif$
+</header>
+
+<div class="container-fluid" id="pyppl-report-container">
+  <div class="row">
+    <div class="col" id="pyppl-report-main">
+
+        <div>
+          $body$
+        </div>
+
+        <div class="page-footer" id="pyppl-report-footer">
+          <div class="text-sm-right font-weight-lighter font-italic py-1">
+            $if(pdf)$ Powered $else$ Best experience with
+            <a href="https://www.google.com/chrome/">Chrome</a>,
+            powered
+            $endif$
+            by <a href="https://github.com/pwwang/PyPPL">PyPPL</a>
+            v$pyppl_version$ with
+            <a href="https://github.com/pwwang/pyppl-report">
+              pyppl-report
+            </a> v$report_version$
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  window.metadata = {};
+  window.metadata.toc = $if(toc)$ ${toc} $else$ 0 $endif$;
+  window.metadata.pdf = $if(pdf)$ true $else$ false $endif$;
+</script>
+<script src="static/jquery.min.js"></script>
+<script src="static/adapter.js"></script>
+$if(pdf)$
+$else$
+<script src="static/bootstrap.min.js"></script>
+<script src="static/datatables.min.js"></script>
+<script src="static/echo.min.js"></script>
+<script src="static/template.js"></script>
+$endif$
+</body data-spy="scroll">
+</html>

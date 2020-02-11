@@ -105,3 +105,9 @@ poetry.lock
 
 # backup files
 *.bak
+
+# tests
+tests/outputs/
+
+# docs
+*.tmp.md

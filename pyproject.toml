@@ -11,8 +11,7 @@ license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/pwwang/pyppl_report"
 repository = "https://github.com/pwwang/pyppl_report"
-include = [ "pyppl_report/resources/",]
-exclude = [ "pyppl_report/resources/**.pyc",]
+include = [ "pyppl_report/templates/" ]
 [[tool.poetry.packages]]
 include = "pyppl_report"
 
@@ -21,6 +20,7 @@ python = "^3.6"
 toml = "^0.10"
 cmdy = "*"
 pyppl = "*"
+liquidpy = "*"
 panflute = "1.11.*"
 
 [tool.poetry.dev-dependencies]

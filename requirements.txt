@@ -1,4 +1,5 @@
 cmdy
+liquidpy
 panflute==1.11.*
 pyparam
 pyppl

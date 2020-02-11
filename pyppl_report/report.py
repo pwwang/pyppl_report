@@ -1,12 +1,15 @@
 """Report generating system using pandoc"""
 import re
 from pathlib import Path
+from functools import partial
+from base64 import b64encode, b64decode
 from shutil import rmtree
 from cmdy import pandoc, wkhtmltopdf
+from .filters.utils import copy_to_media
 
-RESOURCE_DIR = Path(__file__).resolve().parent / 'resources'
-DEFAULT_FILTERS = ['filetable', 'modal']
-DEFAULT_TEMPLATE = 'bootstrap'
+HERE = Path(__file__).resolve().parent
+DEFAULT_FILTERS = ['table', 'link', 'image']
+DEFAULT_TEMPLATE = 'layui'
 
 
 def _replace_all(regex, callback, string):
@@ -19,120 +22,99 @@ def _replace_all(regex, callback, string):
         ret += callback(match.group(), *match.groups())
     return ret + string[start:]
 
+def _replace_ref_index(matched, citations):
+    """citations: index => ref"""
+    index = matched[1:-1]
+    if index in citations:
+        return '[#REF: %s #]' % citations[index]
+    return matched
+
+def _replace_ref(matched, citations):
+    """citations: ref => index"""
+    cite = matched[7:-3] # [#REF: ... #]
+    if cite not in citations:
+        citations[cite] = len(citations) + 1
+    return '[[{i}]](#PYPPL-REF-{i}){{.pyppl-report-refindex}}'.format(
+        i=citations[cite]
+    )
+
 
 class ProcReport:  # pylint: disable=too-few-public-methods
     """Report for each process"""
     def __init__(self, rptfile):
         self.rptfile = Path(rptfile)
-        self.source, self.appendix = self._analysis()
+        self.source = None
 
-    def _analysis(self):
-        """Get the citations and appendix"""
+    def prepare(self):
+        """Get the citations"""
         lines = self.rptfile.read_text().splitlines()
         # get the references first
         # references should be placed at the bottom
-        source = None
-        appendix = None
+        source = []
         citations = {}
         for line in lines:
             line = line.rstrip('\n')
-            if line.startswith(
-                    '## Appendix'):  # appendix has to be on level2 anyway
-                appendix = []
-            else:
-                matched = re.match(r'\[(\d+)\]: (.+)', line)
-                if matched:
-                    citations[matched.group(1)] = matched.group(2).strip()
-                elif appendix is None:
-                    source = source or []
-                    source.append(line)
-                else:
-                    appendix.append(line)
-
-        # replace all citation marks with real references
-        def replace(mstr):
-            index = mstr[1:-1]
-            if index not in citations:
-                return mstr
-            return '[#REF: %s #]' % citations[index]
+            # [1]: reference 1
+            # [2]: reference 2
+            matched = re.match(r'\[(\d+)\]: (.+)', line)
+            if not matched:
+                source.append(line)
+                continue
+            citations[matched.group(1)] = b64encode(
+                matched.group(2).strip().encode()
+            ).decode()
 
         source = '\n'.join(source) if source else ''
-        source = _replace_all(r'\[\d+\]', replace, source)
-
-        appendix = '\n'.join(appendix) if appendix else ''
-        appendix = _replace_all(r'\[\d+\]', replace, appendix)
-
-        return source, appendix
-
+        self.source = _replace_all(r'\[\d+\]',
+                                   partial(_replace_ref_index,
+                                           citations=citations),
+                                   source)
 
 class Report:
     """The Report class"""
-    def __init__(self, rptfiles, outfile, title):
+    def __init__(self, rptfiles, outfile, title='Untitled document'):
         self.reports = [ProcReport(rptfile) for rptfile in rptfiles]
-        self.outfile = Path(outfile)
-        self.mdfile = self.outfile.resolve().with_suffix('.md')
-        if str(self.mdfile) in [
-                str(Path(rptfile).resolve()) for rptfile in rptfiles
-        ]:
-            # don't overwrite input file
-            self.mdfile = self.outfile.with_suffix('.tmp.md')
-        self.orgtitle = ''
-        if rptfiles:
-            with open(rptfiles[0], 'r') as frpt:
-                firstline = frpt.readline().strip()
-                while not firstline:
-                    firstline = frpt.readline().strip()
-                if firstline and firstline[0] == '#' and firstline[1] != '#':
-                    self.orgtitle = firstline.lstrip('# ')
+        # // convert to relative path
+        try:
+            self.outfile = Path(outfile).resolve().relative_to(Path.cwd())
+        except ValueError:
+            self.outfile = Path(outfile)
+        self.mdfile = self.outfile.with_suffix('.tmp.md')
         self.title = title
-        self.cleanup()
 
     def cleanup(self):
         """Cleanup and generate markdown for each process"""
         citations = {}
 
-        def replace(mstr):
-            cite = mstr[7:-3]
-            if cite not in citations:
-                citations[cite] = len(citations) + 1
-            return '<sup><a href="#REF_{i}">[{i}]</a></sup>'.format(
-                i=citations[cite])
-
         with self.mdfile.open('w') as fmd:
-            # only when self.title starts with # or there is no orgtitle
-            if self.title.startswith('#') or not self.orgtitle:
-                fmd.write('# %s\n\n' % self.title.lstrip('# '))
-            appendix = ''
             for report in self.reports:
+                report.prepare()
                 # replace reference to citation indexes
-                source = _replace_all(r'\[#REF: .+? #\]', replace,
+                source = _replace_all(r'\[#REF: .+? #\]',
+                                      partial(_replace_ref,
+                                              citations=citations),
                                       report.source)
-                if report.appendix:
-                    appendix += _replace_all(r'\[#REF: .+? #\]', replace,
-                                             report.appendix)
 
                 fmd.write(source + '\n\n')
 
-            if appendix:
-                fmd.write('## Appendix\n')
-                fmd.write(appendix + '\n\n')
-
             if citations:
-                fmd.write('## Reference\n')
+                fmd.write('# Reference\n')
                 for cite, index in sorted(citations.items(),
-                                          key=lambda item: item[1]):
-                    fmd.write(('<a name="REF_{i}" class="reference">'
-                               '**[{i}]** {cite}</a>\n\n').format(i=index,
-                                                                  cite=cite))
+                                          key=lambda item: int(item[1])):
+                    fmd.write('[{i}]: [{cite}](){{.pyppl-report-reference '
+                              'name=PYPPL-REF-{i}}}'.format(
+                                  i=index, cite=b64decode(cite).decode()
+                              ))
 
-    def generate(self, standalone, template, filters):
+    def generate(self, standalone, template, filters, toc):
         """Generate the reports"""
         from pyppl import __version__ as pyppl_version
         from . import __version__ as report_version
 
+        self.cleanup()
         template = template or DEFAULT_TEMPLATE
         if template and '/' not in template:
-            template = RESOURCE_DIR / 'templates' / template / 'template.html'
+            template = HERE / 'templates' / template / 'template.html'
 
         ext = self.outfile.suffix.lower()
         if 'htm' not in ext and 'pdf' not in ext:
@@ -141,58 +123,63 @@ class Report:
             raise ValueError('pdf format has to be standalone.')
 
         metadata = [
-            'pagetitle=%s' % (self.title.lstrip('# ') \
-                if self.title.startswith('#') or not self.orgtitle \
-                else self.orgtitle),
+            'pagetitle=%s' % self.title,
             'pyppl_version=%s' % pyppl_version,
             'report_version=%s' % report_version,
-            'pdf=%s' % bool('pdf' in ext)]
+            'standalone=%s' % int(standalone),
+            'indir=%s' % self.reports[0].rptfile.parent if self.reports else '',
+            'outdir=%s' % self.outfile.parent,
+            'pdf=%s' % bool('pdf' in ext)
+        ]
+        if toc > 0:
+            metadata.append('toc=%d' % toc)
         srcpath = ['.', str(self.outfile.parent), str(Path(template).parent)]
-        if not standalone:
-            mediadir = self.outfile.with_suffix('.files')
-            if mediadir.is_dir():
-                rmtree(mediadir)
-            metadata.extend(
-                ['mediadir=%s' % mediadir,
-                 'template=%s' % template])
-            srcpath.insert(2, str(mediadir))
+        mediadir = self.outfile.with_suffix('.files')
+        if mediadir.is_dir():
+            rmtree(mediadir)
+        metadata.extend(['mediadir=%s' % mediadir, 'template=%s' % template])
+        srcpath.insert(2, str(mediadir))
 
-        dfilters = DEFAULT_FILTERS[:]
         if not standalone:
-            dfilters.append('nonstand')
-        dfilters.extend(filters or [])
+            # copy files to dir relative to the output file
+            dest_staticdir = self.outfile.parent.joinpath('static')
+            src_staticdir = Path(template).parent.joinpath('static')
+            if not src_staticdir.is_dir():
+                raise ValueError(
+                    'Directory "static" not found in the template directory'
+                )
+            dest_staticdir.mkdir(parents=True, exist_ok=True)
+            for staticfile in src_staticdir.rglob('*'):
+                if staticfile.is_file():
+                    copy_to_media(staticfile,
+                                  dest_staticdir.joinpath(
+                                      staticfile.relative_to(src_staticdir)
+                                  ))
 
-        args = (self.mdfile, )
         kwargs = {
-            'metadata':
-            metadata,
-            'read':
-            'markdown',
-            'write':
-            'html5',
-            'template':
-            template,
-            'filter':
-            [RESOURCE_DIR / 'filters' / (filt + '.py') for filt in dfilters],
-            'toc':
-            True,
-            'toc-depth':
-            3,
-            'self-contained':
-            standalone,
-            'resource-path':
-            ':'.join(srcpath),
-            '_raise':
-            True,
-            '_sep':
-            'auto',
-            '_dupkey':
-            True,
+            'metadata': metadata,
+            'read': 'markdown',
+            'write': 'html5',
+            'template': template,
+            'filter': [HERE.joinpath('filters', filt + '.py')
+                       if '_' not in filt
+                       else filt
+                       for filt in DEFAULT_FILTERS + (filters or [])],
+            'self-contained': standalone,
+            'resource-path': ':'.join(srcpath),
+            '_raise': True,
+            '_sep': 'auto',
+            '_dupkey': True,
         }
         if 'pdf' not in ext:
             kwargs['output'] = self.outfile
             kwargs['_hold'] = True
-            return pandoc(*args, **kwargs)
+            return pandoc(self.mdfile, **kwargs)
+
         kwargs['_pipe'] = True
-        return pandoc(*args, **kwargs) | wkhtmltopdf(
-            '-', _=self.outfile, _raise=True, _hold=True)
+        return pandoc(self.mdfile, **kwargs) | wkhtmltopdf(
+            '-',
+            _=self.outfile,
+            _raise=True,
+            _hold=True
+        )
