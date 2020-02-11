@@ -283,14 +283,6 @@ p {line-height: 20px; margin: 8px 0;}
     color: #651fff;
 }
 
-ul > li {
-    list-style-position: outside;
-    list-style-type: square;
-}
-
-ul:not(.layui-nav) {
-    margin-left: 20px;
-}
 
 .layui-nav-tree a {
     color: rgb(46, 46, 46) !important;
@@ -342,6 +334,15 @@ ul:not(.layui-nav) {
 
 .pyppl-report-reference {
     display: block;
+}
+
+ul > li {
+    list-style-position: outside;
+    list-style-type: square;
+}
+
+ul:not([class]) {
+    margin-left: 20px;
 }
 
 ul > li > p {

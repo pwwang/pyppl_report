@@ -5,8 +5,7 @@
 A report generating system for [PyPPL][1]
 
 ## Installation
-Requires pandoc 2.9+ (and wkhtmltopdf 0.12.4+ when creating PDF reports)
-(pandoc 2.8+ may work, but not tested)
+Requires pandoc 2.7+ (and wkhtmltopdf 0.12.4+ when creating PDF reports)
 
 `pyppl_report` requires `pandoc/wkhtmltopdf` to be installed in `$PATH`
 
