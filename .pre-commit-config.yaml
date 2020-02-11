@@ -47,9 +47,48 @@ repos:
         args: [tests/]
         pass_filenames: false
         files: ^tests/.+$|^pyppl_report/.+$
-    -   id: generatedocs
-        name: "Generate docs using README.md and tests/data/test.md"
-        entry: pytest -k test_templates -s
+    -   id: genedocindex
+        name: "Generate docs using README.md"
+        entry: >
+          pyppl report -i README.md
+                       -o docs/index.html
+                       -n false
+                       --toc 0
+                       --title "Documentation for pyppl_report"
+                       --template layui
         language: system
-        files: ^README.md|tests/data/test.md$
+        files: ^README.md$
+        pass_filenames: false
+    -   id: genedocbootstrip
+        name: "Generate bootstrip docs"
+        entry: >
+          pyppl report -i tests/data/test.md
+                          -o docs/bootstrap.html
+                          -n false
+                          --title "Bootstrap template for pyppl_report"
+                          --template bootstrap
+        language: system
+        files: ^tests/data/test.md|^pyppl_report/$
+        pass_filenames: false
+    -   id: genedoclayui
+        name: "Generate layui docs"
+        entry: >
+          pyppl report -i tests/data/test.md
+                          -o docs/layui.html
+                          -n false
+                          --title "Layui template for pyppl_report"
+                          --template layui
+        language: system
+        files: ^tests/data/test.md|^pyppl_report/$
+        pass_filenames: false
+    -   id: genedocsemantic
+        name: "Generate semantic docs"
+        entry: >
+          pyppl report -i tests/data/test.md
+                          -o docs/semantic.html
+                          -n false
+                          --title "Senmantic template for pyppl_report"
+                          --template semantic
+        language: system
+        files: ^tests/data/test.md|^pyppl_report/$
         pass_filenames: false

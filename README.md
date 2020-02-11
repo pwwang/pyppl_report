@@ -73,9 +73,9 @@ We use `[1]`, `[2]` ... to link to the references, so HTML links have to be in-p
 
 ## Built-in themes
 
-[Bootstrip]()
-[Layui]()
-[Semantic]()
+[Bootstrip](https://pwwang.github.io/pyppl_report/bootstrap.html)
+[Layui](https://pwwang.github.io/pyppl_report/layui.html)
+[Semantic](https://pwwang.github.io/pyppl_report/semantic.html)
 
 
 [1]: https://github.com/pwwang/PyPPL

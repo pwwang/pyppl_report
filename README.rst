@@ -120,6 +120,6 @@ We use ``[1]``\ , ``[2]`` ... to link to the references, so HTML links have to b
 Built-in themes
 ---------------
 
-`Bootstrip <>`_
-`Layui <>`_
-`Semantic <>`_
+`Bootstrip <https://pwwang.github.io/pyppl_report/bootstrap.html>`_
+`Layui <https://pwwang.github.io/pyppl_report/layui.html>`_
+`Semantic <https://pwwang.github.io/pyppl_report/semantic.html>`_

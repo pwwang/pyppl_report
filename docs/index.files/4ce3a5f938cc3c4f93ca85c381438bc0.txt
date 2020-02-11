@@ -1,3 +1,0 @@
-ID	Name	Sex	Age
-1	Bob	M	49
-2	Alice	F	20
