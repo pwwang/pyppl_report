@@ -192,21 +192,45 @@ When number of panels <= `4` we will use tabs, otherwise accordions are used.
 
 ```markdown
 ::: {.panel head=Panel1}
-panel1
+Panel1 contents ...
 :::
 
 ::: {.panel head=Panel2}
-panel2
+![Snapshot](./snapshot.png)
 :::
 
 ```
 
-::: {.panel head=Panel1}
-panel1
+:::{.admon .tip}
+
+We can also use headings (`H1` up to `H5`) as the head/title of the panel, which will
+be useful if you want to put the headings in TOC.
+```markdown
+::: {.panel}
+### Panel1
+
+Panel1 contents ...
 :::
 
-::: {.panel head=Panel2}
-panel2
+::: {.panel}
+### Panel2
+
+![Snapshot](./snapshot.png)
+:::
+```
+
+:::
+
+::: {.panel}
+### Panel1
+
+Panel1 contents ...
+:::
+
+::: {.panel}
+### Panel2
+
+![Snapshot](./snapshot.png)
 :::
 
 ::: {.admon .note}
@@ -216,78 +240,25 @@ have to be adjacent. Otherwise, they will be built as separate sets of tabs or a
 
 ## Accordions
 
-::: {.panel head=Panel1}
-panel1
+::: {.panel}
+### Panel1
+Panel1 contents
 :::
 
 ::: {.panel head=Panel2}
-panel2
+Panel2 contents
+
+This panel will be hidden in TOC, as I used:
+`::: {.panel head=Panel2}`
 :::
 
-::: {.panel head=Panel1}
-panel1
+::: {.panel}
+### Panel3
+Panel3 contents
 :::
 
-::: {.panel head=Panel2}
-panel2
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-
-The quick brown fox jumps over the lazy dog.
-:::
-
-::: {.panel head=Panel1}
-panel1
+::: {.panel}
+### Panel4
 
 The quick brown fox jumps over the lazy dog.
 
@@ -344,8 +315,14 @@ The quick brown fox jumps over the lazy dog.
 The quick brown fox jumps over the lazy dog.
 :::
 
-::: {.panel head=Panel2}
-panel2
+::: {.panel}
+### Panel5
+
+![Snapshot](./snapshot.png)
+:::
+
+::: {.panel}
+### Panel6
 :::
 
 ## Force tabs or accordions

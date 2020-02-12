@@ -297,12 +297,17 @@ p {line-height: 20px; margin: 8px 0;}
     background-color: #dad7ff21;
     color: black !important;
 }
+.layui-nav-tree .layui-nav-item dd dd>a {
+    font-size: 12px;
+    padding: 6px 4px 2px 0px;
+    margin-left: -10px;
+}
 
 .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover, .layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a {
     background-color: inherit;
 }
 
-.layui-nav-itemed>.layui-nav-child {
+.layui-nav-tree .layui-nav-itemed>.layui-nav-child {
     background-color: #fff !important;
     padding-bottom: 5px;
 }

@@ -45,16 +45,21 @@
         );
 
         var add_toc = function(node, dom) {
+            var nodeid = node.me.prop('id');
+            if (!nodeid && node.me.parent('section').length > 0) {
+                // try to find section
+                nodeid = 'pyppl-panel-' + node.me.parent('section').prop('id');
+            }
             if (node.level == 1) {
                 var menode = $('<li />')
                     .addClass('layui-nav-item')
-                    .append('<a href="#'+ node.me.prop('id') +'" title="'
+                    .append('<a href="#'+ nodeid +'" title="'
                             + node.me.text() +'">'
                             + node.me.text() + '</a>');
                 menode.appendTo(dom);
             } else {
                 var menode = $('<dd />').append(
-                    '<a href="#'+ node.me.prop('id')
+                    '<a href="#'+ nodeid
                     +'" title="'+ node.me.text() +'">'
                     + node.me.text() + '</a>'
                 );
@@ -125,7 +130,7 @@
                 icon = 'layui-icon-notice';
                 break;
             case $(this).hasClass('info') || $(this).hasClass('tip'):
-                title = title || 'Warning';
+                title = title || 'Tips';
                 icon = 'layui-icon-tips';
                 break;
             case $(this).hasClass('danger') || $(this).hasClass('error'):
@@ -145,18 +150,31 @@
 
     // panels
     var panelTab = function($wrapper) {
-        $wrapper.children('.panel').addClass('layui-tab-item').first().addClass('layui-show');
+        $wrapper.children('.panel')
+            .addClass('layui-tab-item')
+            .first()
+            .addClass('layui-show');
         $wrapper.addClass('layui-tab-content')
             .wrap('<div class="layui-tab layui-tab-card" />')
             .before('<ul class="layui-tab-title">' +
                     $wrapper.children('.panel')
                         .get()
-                        .map(panel => '<li>'+ $(panel).attr('data-head') +'</li>')
+                        .map(panel => '<li id="'+
+                            ($(panel).prop('id') && 'pyppl-panel-' +
+                            $(panel).prop('id')) +'">' +
+                            ($(panel).attr('data-head') ||
+                            $(panel).children('h1,h2,h3,h4,h5')
+                            .first().detach().html()) +
+                            '</li>')
                         .join('\n') +
                     '</ul>')
             .prev()
-            .find('li:first')
-            .addClass('layui-this');
+            .children('li:first')
+            .addClass('layui-this')
+            .end()
+            .children('li')
+            // force lazy loading images to show
+            .click(() => $('#pyppl-report-main').scroll());
     };
 
     var panelAccordion = function($wrapper) {
@@ -164,17 +182,22 @@
             .attr({'lay-accordion': '', 'lay-filter': 'accordion'})
             .children('.panel')
             .each(function(index) {
+                var panelid = $(this).prop('id') &&
+                    'pyppl-panel-' + $(this).prop('id');
                 $(this).wrap('<div class="layui-colla-item"></div>')
                     .addClass('layui-colla-content')
-                    .before('<div class="layui-colla-title">' + $(this).attr('data-head') + '</div>');
+                    .before('<div class="layui-colla-title" id="'+ panelid +'">' +
+                        ($(this).attr('data-head') ||
+                         $(this).children('h1,h2,h3,h4,h5')
+                            .first().detach().html()) + '</div>');
                 if (index === 0) {
                     $(this).addClass('layui-show');
                 }
             });
     };
     // has preceding siblings,      no leading siblings
-    $(':not(div.panel) + div.panel, div.panel:first-child').each(function(index){
-        var panels = $(this).nextUntil(':not(div.panel)')
+    $(':not(.panel) + .panel, .panel:first-child').each(function(index){
+        var panels = $(this).nextUntil(':not(.panel)')
                .addBack()
                .wrapAll('<div id="pyppl-report-panel-'+ (index+1) +'" />');
         var $panelWrapper = $('#pyppl-report-panel-' + (index + 1));
@@ -190,11 +213,23 @@
     });
 
     // toggle layui-this for toc items
-    $('li.layui-nav-item').click(function(){
+    $('li.layui-nav-item').click(function(e){
+        e.stopImmediatePropagation();
         $(this).siblings()
             .removeClass('layui-this')
             .end()
             .addClass('layui-this');
+    }).find('a').click(function(){
+        // expand panels
+        if ($(this).attr('href').substr(0, 13) == '#pyppl-panel-') {
+            var panelid = $(this).attr('href').substr(1);
+            var $target = $('[id="'+ panelid +'"]');
+            if (!$target.hasClass('layui-this') &&
+                !$target.next().hasClass('layui-show')) {
+
+                $target.click();
+            }
+        }
     });
 
 
