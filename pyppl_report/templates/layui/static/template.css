@@ -192,12 +192,25 @@ h1 {
     margin: 24px 0px 12px 0px;
 }
 
+h2 {
+    margin: 18px 0px 8px 0px;
+}
+
 h1 + h2 {
-    margin: 0px 0px 8px 0px;
+    margin-top: 0px;
 }
 
 h2 {
     margin: 18px 0px 8px 0px;
+}
+
+h3 {
+    font-weight: bold;
+    margin: 10px 0px 6px 0px;
+}
+
+h2 + h3 {
+    margin-top: 0px;
 }
 
 p {line-height: 20px; margin: 8px 0;}
@@ -352,4 +365,8 @@ ul:not([class]) {
 
 ul > li > p {
     display: inline-block;
+}
+
+.layui-border-box {
+    margin-bottom: 18px;
 }

@@ -136,6 +136,7 @@
                 title: this.alt,
                 id: 'pyppl-report-imagepopup-' + $(this).index(),
                 content: '<img src="' + this.src + '" '+
+                         '     style="max-width: 100%;"' +
                          '     onclick="javascript:var a = document.createElement(\'a\');' +
                          '                         a.href=\''+ this.src +'\';' +
                          '                         a.target=\'_blank\';' +
