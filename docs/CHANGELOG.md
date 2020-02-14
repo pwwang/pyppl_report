@@ -1,3 +1,10 @@
+## 0.6.0
+- Add caching for report generation
+- Rewrite part of the plugin for better theming
+- Add three builtin themes (templates): layui, bootstrap, semantic
+- Allow comments in csv for table filter
+- Try another run if pandoc throws "Stack space overflow".
+
 ## 0.5.0
 - Adopt `PyPPL 3.0`
 
