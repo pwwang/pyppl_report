@@ -230,6 +230,10 @@ I have enough details.
 
 Then you can show that image in the report only when you have `pXXX.config.report_envs.showimage = True`.
 
+## Change log
+
+[Change log](./docs/CHANGELOG.md)
+
 [1]: https://github.com/pwwang/PyPPL
 [2]: https://pyppl_report.readthedocs.io/en/latest/
 [3]: https://img.shields.io/pypi/v/pyppl_report?style=flat-square
