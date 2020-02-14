@@ -196,9 +196,25 @@ def report(ppl, # pylint: disable=too-many-arguments
             logger.report('Report generated: %s', outfile)
             logger.report('Time elapsed: %s', format_secs(time() - timer))
         except CmdyReturnCodeException as ex:
-            logger.error(str(ex))
-            sys.exit(1)
+            ex = str(ex)
+            if 'Stack space overflow' not in ex:
+                logger.error(str(ex))
+                sys.exit(1)
 
+            logger.warning('Error "Stack space overflow" from pandoc, '
+                           'try to use "+RTS -K512M -RTS"')
+            cmds = cmd.cmd.split(' ', 1)
+            cmds.insert(1, '+RTS -K512M -RTS')
+            cmd.cmd = ' '.join(cmds)
+            try:
+                logger.debug('Running: ' + cmd.cmd)
+                cmd.done = False
+                cmd.run()
+                logger.report('Report generated: %s', outfile)
+                logger.report('Time elapsed: %s', format_secs(time() - timer))
+            except CmdyReturnCodeException as ex2:
+                logger.error(str(ex2))
+                sys.exit(1)
 
 @hookimpl
 def pyppl_init(ppl):

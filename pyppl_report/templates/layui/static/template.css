@@ -354,13 +354,17 @@ p {line-height: 20px; margin: 8px 0;}
     display: block;
 }
 
-ul > li {
-    list-style-position: outside;
-    list-style-type: square;
+
+ul:not([class]), ol {
+    margin-left: 20px;
 }
 
-ul:not([class]) {
-    margin-left: 20px;
+ul:not([class]) > li:last-child, ol > li:last-child {
+    margin-bottom: 6px;
+}
+
+ol > li {
+    list-style-type: inherit;
 }
 
 ul > li > p {
@@ -369,4 +373,9 @@ ul > li > p {
 
 .layui-border-box {
     margin-bottom: 18px;
+}
+ul > li {
+    list-style-position: outside;
+    list-style-type: square;
+    margin-top: 2px;
 }

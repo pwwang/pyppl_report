@@ -36,7 +36,7 @@ from pathlib import Path
 import panflute as pf
 from utils import copy_to_media, md5str
 
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument,too-many-branches,too-many-statements
 def fenced_action(options, data, element, doc):
     """fenced action"""
     # We'll only run this for CodeBlock elements of class 'table'
@@ -50,36 +50,45 @@ def fenced_action(options, data, element, doc):
     attributes['data-prtable-caption'] = options.get('caption',
                                                      'Untitled Table')
 
-    filepath = options.get('file')
-    has_header = options.get('header', True)
-    nrows = options.get('rows', 0)
-    ncols = options.get('cols', 0)
+    options['header'] = options.get('header', True)
+    options['nrows'] = options.pop('rows', options.get('nrows', 0))
+    options['ncols'] = options.pop('cols', options.get('ncols', 0))
     mediadir = Path(doc.get_metadata('mediadir'))
-    nrows += 1 if nrows and has_header else 0
+    options['nrows'] += 1 if options['nrows'] and options['header'] else 0
 
     csvargs = options.get('csvargs', {})
     csvargs['dialect'] = csvargs.get('dialect', "unix")
     csvargs['delimiter'] = csvargs.get('delimiter',
                                        "\t").encode().decode('unicode_escape')
+    comment = csvargs.pop('comment', False)
 
-    filepath = (Path(doc.get_metadata('indir')) / filepath
-                if filepath and str(filepath)[:1] != '/'
-                else filepath)
-    fdata = io.StringIO(data) if data else open(filepath)
+    options['file'] = (Path(doc.get_metadata('indir')) / options['file']
+                       if 'file' in options and str(options['file'])[:1] != '/'
+                       else options.get('file'))
+    fdata = io.StringIO(data) if data else open(options['file'])
     attributes['data-prtable-header'] = False
+
+    if comment:
+        while True:
+            fcursor = fdata.tell()
+            pf.debug(fcursor)
+            if fdata.readline().startswith(comment):
+                continue
+            fdata.seek(fcursor)
+            break
     try:
         reader = csv.reader(fdata, **csvargs)
         attributes['data-prtable-data'] = []
         for i, row in enumerate(reader):
-            if i == 0 and has_header:
+            if options['header'] and not attributes['data-prtable-header']:
                 attributes['data-prtable-header'] = row
                 continue
 
-            if nrows and i > nrows:
-                continue
+            if options['nrows'] and i > options['nrows']:
+                break
             attributes['data-prtable-data'].append([
                 x for k, x in enumerate(row)
-                if not ncols or k < ncols
+                if not options['ncols'] or k < options['ncols']
             ])
     finally:
         fdata.close()
@@ -94,12 +103,14 @@ def fenced_action(options, data, element, doc):
         attributes['data-prtable-header'][0] = "ROWNAME"
 
     if attributes['data-prtable-download'] == 'true':
-        if not filepath:
-            filepath = mediadir.joinpath(str(md5str(data))).with_suffix('.txt')
-            attributes['data-prtable-file'] = str(filepath.relative_to(
+        if not options['file']:
+            options['file'] = mediadir.joinpath(
+                str(md5str(data))
+            ).with_suffix('.txt')
+            attributes['data-prtable-file'] = str(options['file'].relative_to(
                 doc.get_metadata('outdir')
             ))
-            with filepath.open('w') as fdata:
+            with options['file'].open('w') as fdata:
                 if attributes['data-prtable-header']:
                     fdata.write("\t".join(attributes['data-prtable-header']) +
                                 "\n")
@@ -108,10 +119,10 @@ def fenced_action(options, data, element, doc):
                                 "\n")
         else:
             # copy file to mediadir and check if file exists
-            filepath = Path(filepath)
+            options['file'] = Path(options['file'])
             attributes['data-prtable-file'] = str(copy_to_media(
-                filepath,
-                mediadir / filepath.name
+                options['file'],
+                mediadir / options['file'].name
             ).relative_to(doc.get_metadata('outdir')))
 
     attributes['data-prtable-header'] = json.dumps(

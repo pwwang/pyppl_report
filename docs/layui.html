@@ -1955,18 +1955,25 @@ border-top-color: #666;
 .pyppl-report-reference {
 display: block;
 }
-ul > li {
-list-style-position: outside;
-list-style-type: square;
-}
-ul:not([class]) {
+ul:not([class]), ol {
 margin-left: 20px;
+}
+ul:not([class]) > li:last-child, ol > li:last-child {
+margin-bottom: 6px;
+}
+ol > li {
+list-style-type: inherit;
 }
 ul > li > p {
 display: inline-block;
 }
 .layui-border-box {
 margin-bottom: 18px;
+}
+ul > li {
+list-style-position: outside;
+list-style-type: square;
+margin-top: 2px;
 }
 </style>
   <meta name="generator" content="pandoc" />
@@ -2416,13 +2423,15 @@ margin-bottom: 18px;
                 if (index === 0) {
                     $(this).addClass('layui-show');
                 }
-            });
+            })
+            .click(() => $('#pyppl-report-main').scroll());
     };
     // has preceding siblings,      no leading siblings
     $(':not(.panel) + .panel, .panel:first-child').each(function(index){
         var panels = $(this).nextUntil(':not(.panel)')
                .addBack()
                .wrapAll('<div id="pyppl-report-panel-'+ (index+1) +'" />');
+
         var $panelWrapper = $('#pyppl-report-panel-' + (index + 1));
         if ($(this).hasClass('tab')) {
             panelTab($panelWrapper);
@@ -2466,6 +2475,67 @@ for(var e=this.offsetParent;e&&!pe.nodeName(e,"html")&&"static"===pe.css(e,"posi
 </script>
 <script>// Initialize layui components
 ;(function(){
+    /**
+     * Rewrite the sort function to
+     * 1. support scientific notation of floats
+     * 2. not clone deeply to save memory
+     * 3. keep the previous order of ties objects in the array
+     *
+     *    var data = [{"rowname":"C","PMET":1,"PNoMET":1},
+     *                {"rowname":"B","PMET":1,"PNoMET":1},
+     *                {"rowname":"A","PMET":1,"PNoMET":0},
+     *                {"rowname":"E","PMET":0,"PNoMET":0},
+     *                {"rowname":"D","PMET":0,"PNoMET":1}]
+     *
+     *    Previously, sort(data, 'PNoMET', true) yields
+     *    var data = [{"rowname":"D","PMET":0,"PNoMET":1},
+     *                {"rowname":"B","PMET":1,"PNoMET":1},
+     *                {"rowname":"C","PMET":1,"PNoMET":1},
+     *                {"rowname":"E","PMET":0,"PNoMET":0},
+     *                {"rowname":"A","PMET":1,"PNoMET":0}]
+     *
+     *    Now it yields:
+     *    var data = [{"rowname":"C","PMET":1,"PNoMET":1},
+     *                {"rowname":"B","PMET":1,"PNoMET":1},
+     *                {"rowname":"D","PMET":0,"PNoMET":1},
+     *                {"rowname":"E","PMET":0,"PNoMET":0},
+     *                {"rowname":"A","PMET":1,"PNoMET":0}]
+     *
+     */
+    layui.sort = function(obj, key, desc){
+        var clone = (obj || []).slice(0);
+
+        if(!key) return clone;
+
+        // detect numbers
+        clone.sort(function(o1, o2){
+            var isNum = /^-?[\d.]+(?:[eE]-?\d+)?$/
+            ,v1 = o1[key]
+            ,v2 = o2[key];
+
+            if(isNum.test(v1)) v1 = parseFloat(v1);
+            if(isNum.test(v2)) v2 = parseFloat(v2);
+
+            if(v1 && !v2){
+                return 1;
+            } else if(!v1 && v2){
+                return -1;
+            }
+
+            if(v1 > v2){
+                return 1;
+            } else if (v1 < v2) {
+                return -1;
+            } else {
+                var ret = obj.indexOf(o1) < obj.indexOf(o2) ? -1 : 1;
+                return desc ? -ret : ret;
+            }
+        });
+
+        desc && clone.reverse(); //倒序
+        return clone;
+    };
+
     var element = layui.element;
     var table = layui.table;
     var flow = layui.flow;
@@ -2477,6 +2547,9 @@ for(var e=this.offsetParent;e&&!pe.nodeName(e,"html")&&"static"===pe.css(e,"posi
      * Handling tables
      */
     var formatCell = function(cell) {
+        if (!cell) {
+            return '';
+        }
         if (cell.length > 10 && !isNaN(parseFloat(cell))) {
             var index_e = Math.max(cell.indexOf('e'), cell.indexOf('E'));
             if (index_e == -1) {
@@ -2540,7 +2613,14 @@ for(var e=this.offsetParent;e&&!pe.nodeName(e,"html")&&"static"===pe.css(e,"posi
                        'lay-filter="'+ tableid +'"></table>');
         $elem.replaceWith($table);
 
-        // render tab le
+        // render table
+        data = data.map(function(row) {
+            var ret = {};
+            for (var i in headers) {
+                ret[headers[i]] = formatCell(row[i]);
+            }
+            return ret;
+        });
         table.render({
             elem: $table[0],
             page: true,
@@ -2553,13 +2633,7 @@ for(var e=this.offsetParent;e&&!pe.nodeName(e,"html")&&"static"===pe.css(e,"posi
             toolbar: true,
             skin: {size: 'sm', even: true},
             limits: [25, 50, 75, 100],
-            data: data.map(function(row) {
-                var ret = {};
-                for (var i in headers) {
-                    ret[headers[i]] = formatCell(row[i]);
-                }
-                return ret;
-            })
+            data: data
         });
 
         // add caption
@@ -2576,12 +2650,29 @@ for(var e=this.offsetParent;e&&!pe.nodeName(e,"html")&&"static"===pe.css(e,"posi
                 link.click();
             }
         });
+
+        table.on('sort('+ tableid +')', function(obj) {
+            var newdata = data;
+            if (obj.type === 'desc') {
+                newdata = layui.sort(data, obj.field, true);
+            } else if (obj.type === 'asc') {
+                newdata = layui.sort(data, obj.field);
+            }
+            table.reload(tableid, {
+                initSort: obj,
+                data: newdata
+            });
+
+            $("div[lay-id="+ tableid +"] .layui-table-tool-temp")
+            .html('<strong>Table '+ (index + 1) +'. </strong>' +
+                  '<span class="pyppl-table-caption">'+ caption +'</span>');
+        });
     });
 
     /***
      * Handling images
      */
-    var previewimg = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAZABkAAD/7AARRHVja3kAAQAEAAAAMgAA/+4AIUFkb2JlAGTAAAAAAQMAEAMDBgkAAAhaAAANAQAAEB3/2wCEAAgGBgYGBggGBggMCAcIDA4KCAgKDhANDQ4NDRARDA4NDQ4MEQ8SExQTEg8YGBoaGBgjIiIiIycnJycnJycnJycBCQgICQoJCwkJCw4LDQsOEQ4ODg4REw0NDg0NExgRDw8PDxEYFhcUFBQXFhoaGBgaGiEhICEhJycnJycnJycnJ//CABEIAZABkAMBIgACEQEDEQH/xACzAAEBAQEBAQEAAAAAAAAAAAAABAMCBQEHAQEAAAAAAAAAAAAAAAAAAAAAEAABAgUFAQEBAQEAAAAAAAAAAgQBEgMUNBAwUDITESBAkCIRAAADCAICAQMFAQEAAAAAAAABAjHRkrIDcwQ0MFAQESBAIWFBUZFCUhIiEgEAAAAAAAAAAAAAAAAAAACQEwABAgUCBwEAAwEAAAAAAAABAGEQETGBkSHxIDBA8EFxsVFQkKHR/9oADAMBAAIRAxEAAAD9RuXkC8QLxAvEC8QLxAvEC8QLxAvEC8QLxAvEC8QLxAvEC8QLxAvEC8QLxAvEC8QLxBD7sAvgvAAAAAAAAAAAAAAAAAAAAAAAEF8AvgvAAAAAAAAAAAAAAAAAAAAAAAEF8AvgvAAAAAAAAAAAAAAAAAAAAAAAEF8AvgvAAAAAAAAAAAAAAAAAAAAAAAEF8AvgvAAAAAAAAAAAAAAAAAAAAAAAEF8AvgvAAAAAAAAAAAAAAAAAAAAAAAEF8AvgvAAAAAAAAAAAAAAAAAAAAAAAEF8AvgvAAAAAJsNpjtwO3A7cDtwO3A7cDtwO3A7cDtwO3A73lpKgAAAAIL4BfBeAAAAASzUzHVGN5MpEykTKRMpEykTKRMpEykTKRNh6EJlTNSVAAAAAQXwC+C8AAAAAlmpmNL4LwAAAAABJrEaUxfT0gIboTKmakqAAAAAgvgF8F4AAAABLNTMaXwXgCfXzz0vsNp9AABlD6eJF3tudgQ3QmVM1JUAAAABBfAL4LwAAAACWamY0vgvBmTYg2xHpo7AYH3bzKSoAACG6EypmpKgAAAAIL4BfBeAAAAASzUzGl8F4hoiAAFE49Lz/ALwAbWeboXvn0AQ3QmVM1JUAAAABBfAL4LwAAAACWamY0vgvIctMwAAAAADu3z+j0WeghuhMqZqSoAAAACC+AXwXgAAAAEs1Mxpf51JqyGrIashqyGrIashqyGrIa9ziiHac4pmpKgAAAAIL4BfBeAAAAASzVYHDscOxw7HDscOxw7HDscOxw7HDscOxxTjuUgAAAAQXwC+C8AAAAAAAAAAAAAAAAAAAAAAAQXwC+C8AAAAAAAAAAAAAAAAAAAAAAAQXwC+C8AAAAAAAAAAAAAAAAAAAAAAAQXwC+C8AAAAAAAAAAAAAAAAAAAAAAAQXwC+C8AAAAAAAAAAAAAAAAAAAAAAAQXwC+C8AAAAAAAAAAAAAAAAAAAAAAAQXwC+C8AAAAAAAAAAAAAAAAAAAAAAAQXwC/wAK4vQC9AL0AvQC9AL0AvQC9AL0AvQC9AL0AvQC9AL0AvQC9AL0AvQC9AL0AvQC9AL4EJ//2gAIAQIAAQUB/wAcf//aAAgBAwABBQH/ABx//9oACAEBAAEFAWTJnFnYsixZFiyLFkWLIsWRYsixZFiyLFkWLIsWRYsixZFiyLFkWLIsWRYsixZFiyLFkWLIsWRYsixZFiyLFkWLIsWRYsixZFiyLFkWLIsWRYsixZFiyLFkWLIsWRYsixZFiyLFkWLIsWQ9ZM4M2OFyD7CY4XIPsJjhcg+wmOFyD7CY4XIPsJjhcg+wmOFyD7CY4XIPsJjhcg+wmOFyD7CY4XIPsJjhcg+wmOFyD7CY4XIPsJjhcg+wmOFt1IxgTKJlEyiZRMomUTKJlEyiZRMomUTKJlEyiZRMomUTKJlEyiZRMomUU4xjuPsJjhbdX+mluPsJjhbdXRMPsfI8jyPI8jyPI8jyPI8jyPI8jyPI8jyPI8hUJYlLcfYTHC26uiO38lTsUtx9hMcLbq6I7byqsSdQhc34qdiluPsJjhbdXRHbdqR/50hH5HWp2KW4+wmOFt1dEdvwqp8VCP3YXD6nRMPsdanYpbj7CY4W3V0R21VGWAhcuyqnCJ5CUwT+KnYpbj7CY4W3V0R21qK+x0QuX8wqQjHYqdiluPsJjhbdXRHbRapYfhC/mtRXyAipsVOxS3H2ExwturojtotU0fyhfw+/CMfsdELl/dTsUtx9hMcLbq6I7FRXyH7mjL+ErikhGEfzU7FLcfYTHC26uiOxUj/1upVFIlUFQ1qdiluPsJjhbdXRHYX23oRjCKVwVrU7FLcfYTHC26uiOxKmJIkkSSJJEkiSRJIkkSSJJEkiSRJIkkSSJJU61OxS3H2ExwturomPyPrA9YHrA9YHrA9YHrA9YHrA9YHrA9YHrA9YHrA9YHrA9YHrA9YCozRKW4+wmOFt1f6aW4+wmOFt1IRiSqJVEqiVRKolUSqJVEqiVRKolUSqJVEqiVRKolUSqJVEqiVRKolUU4RhuPsJjhcg+wmOFyD7CY4XIPsJjhcg+wmOFyD7CY4XIPsJjhcg+wmOFyD7CY4XIPsJjhcg+wmOFyD7CY4XIPsJjhcg+wmOFyD7CY4XIPsJk9ZwZ3zIvmRfMi+ZF8yL5kXzIvmRfMi+ZF8yL5kXzIvmRfMi+ZF8yL5kXzIvmRfMi+ZF8yL5kXzIvmRfMi+ZF8yL5kXzIvmRfMi+ZF8yL5kXzIvmRfMi+ZF8yL5kXzIvmRfMi+ZF8yL5kPXrOLP/2gAIAQICBj8BHH//2gAIAQMCBj8BHH//2gAIAQEBBj8BxzPHpmZ00f0T/kvwNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcNelAlw16UCXDXpQJcMgyx6ZGVNf8ARP8Ak/wMe0iUuxyLS5TGPaRKXY5FpcpjHtIlLsci0uUxj2kSl2ORaXKYx7SJS7HItLlMY9pEpdjkWlymMe0iUuxyLS5TGPaRKXY5FpcpjHtIlLsci0uUxj2kSl2ORaXKYx7SJS7HItLlMY9pEpdjkWlymMe0iUuxyLS5TGPaRKXY5FpcpjHtIlLsci0uUxj2kSlyF6DQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NB++TItLlMY9pEpchfUnyZFpcpjHtIlLkLx6DQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0evB8mRaXKYx7SJS5C8F9OfJkWlymMe0iUuQvBc//AJDR6/X5HyZFpcpjHtIlLkLwX0Pv5HyZFpcpjHtIlLkLwXx9fp+o9l9CfJkWlymMe0iUuQvBfD34/HD9vsGj7fI+TItLlMY9pEpcheC+Hr9vPo2fH1/HGfJkWlymMe0iUuQvBcHo2efX7+PSv54j5Mi0uUxj2kSlyF4Lz+Pl6Ng9j359GzhPkyLS5TGPaRKXIXgvH5Pg/wCfj+B7L5nyZFpcpjHtIlLkLwXg+b7D7fI+TItLlMY9pEpcheC8Hz+yH5+J8mRaXKYx7SJS5C8F4YGBgYGBgYGBgYGBgYGBgYGfE+TItLlMY9pEpchePYYGBgYGBgYGBgYGBgYGBgYGBgYGD34PkyLS5TGPaRKXIX1J8mRaXKYx7SJS5C9BgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGA/fJkWlymMe0iUuxyLS5TGPaRKXY5FpcpjHtIlLsci0uUxj2kSl2ORaXKYx7SJS7HItLlMY9pEpdjkWlymMe0iUuxyLS5TGPaRKXY5FpcpjHtIlLsci0uUxj2kSl2ORaXKYx7SJS7HItLlMY9pEpdjkWlymMe0iUuxyLS5TGPaRKXY5FpcpjHtIlLsci0uUxjkeRTIypo/un/ACX5GxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGxSjS8bFKNLxsUo0vGQRZFMzOmv8Aun/J/kf/2gAIAQIDAT8Q/px//9oACAEDAwE/EP6cf//aAAgBAQMBPxAgCIkkJJ1D/DChQoUKFChQoUKFChQoUKFChQoUKFChQoUKFChQoUKFCnLKFChQoUKFChQoQBECAEEag/r7FChQoUKFChQoUKFChQoUKFChQoUKFChQoUKFDkwic6J/lP8AKf5T/Kf5T/Kf5T/Kf5T/ACn+U/yn+U/yn+U/yn+U/wAp/lP8p/lP8p/lP8o5MJlKvUlCld/U129SUKV3wkc0p+VLtUu1S7VLtUu1S7VLtUu1S7VLtUu1S7VLtUu1S7VLtUu1S7VLtUu1T2acvMK7epKFK74d710te3yFdvUlCld8O965xIAmaBEGWgfvlAaB1NPrgr2+Qrt6koUrvh3vXOMJB5MokAHg8Fe3yFdvUlCld8O964ZEGoIABqA8g5gKjUROMeKn1wV7fIV29SUKV3w73rgGXy8e0SSZmpRCkdSqECCARqDTkF56n+IHPXR6QCQez54K9vkK7epKFK74d71waWp9RMXk/wCIEETGoPAalprq/eTXt8hXb1JQpXfDveozEip0HDP7COka1eoSPy8f9civb5Cu3qShSu+He9RpNGg4q7YfxEAJUGqOYvMS+R8IEETBmD54q9vkK7epKFK74d71DQx+A5BOBHQcJn98ggMyY4a9vkK7epKFK74d71AhneNBziE6PI/VMFw/OCvb5Cu3qShSu+He9Q/1c+aiRQn88hGvb5Cu3qShSu+He9QJkyBJTJMkyTJMkyTJMkyTJMkyTJMkyQEZgAR5jXt8hXb1JQpXfAAyoE+T5Pk+T5Pk+T5Pk+T5Pk+T5Pk+T5Pk+T5DKGgMK7epKFK7+prt6koUOSCZTon+E/wn+E/wn+E/wn+E/wAJ/hP8J/hP8J/hP8J/hP8ACf4T/Cf4T/Cf4T/Cf4T/AAjkgicq/wBfZQoUKFChQoUKFChQoUKFChQoUKFChQoUKFChQACIggII0D/DChQoUKFChQoUKFChQoUKFChQoUKFChQoUKFChQoUKFCnLKFChQoUKFChQoABEACEk6AT/9k='
+    var previewimg = 'static/image-preview.jpg'
     $('img[src="data:null"]').each(function(){
         var $img = $(this);
         $img.attr('lay-src', $img.attr('data-src'));

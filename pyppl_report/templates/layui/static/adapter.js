@@ -193,13 +193,15 @@
                 if (index === 0) {
                     $(this).addClass('layui-show');
                 }
-            });
+            })
+            .click(() => $('#pyppl-report-main').scroll());
     };
     // has preceding siblings,      no leading siblings
     $(':not(.panel) + .panel, .panel:first-child').each(function(index){
         var panels = $(this).nextUntil(':not(.panel)')
                .addBack()
                .wrapAll('<div id="pyppl-report-panel-'+ (index+1) +'" />');
+
         var $panelWrapper = $('#pyppl-report-panel-' + (index + 1));
         if ($(this).hasClass('tab')) {
             panelTab($panelWrapper);
