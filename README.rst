@@ -19,10 +19,6 @@ pyppl_report
    :target: https://img.shields.io/pypi/pyversions/pyppl_report?style=flat-square
    :alt: PythonVers
  <https://pypi.org/project/pyppl_report/>`_ `
-.. image:: https://img.shields.io/readthedocs/pyppl_report.svg?style=flat-square
-   :target: https://img.shields.io/readthedocs/pyppl_report.svg?style=flat-square
-   :alt: docs
- <https://pyppl_report.readthedocs.io/en/latest/>`_ `
 .. image:: https://img.shields.io/travis/pwwang/pyppl_report?style=flat-square
    :target: https://img.shields.io/travis/pwwang/pyppl_report?style=flat-square
    :alt: Travis building
