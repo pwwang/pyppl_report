@@ -294,3 +294,8 @@ You can interpolate some variables in the templates to make your report flexiabl
    {% endif %}
 
 Then you can show that image in the report only when you have ``pXXX.config.report_envs.showimage = True``.
+
+Change log
+----------
+
+`Change log <./docs/CHANGELOG.md>`_
