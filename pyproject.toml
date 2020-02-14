@@ -4,14 +4,14 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "pyppl_report"
-version = "0.5.0"
+version = "0.6.0"
 description = "A report generating system for PyPPL"
 authors = [ "pwwang <pwwang@pwwang.com>",]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/pwwang/pyppl_report"
 repository = "https://github.com/pwwang/pyppl_report"
-include = [ "pyppl_report/templates/" ]
+include = [ "pyppl_report/templates/",]
 [[tool.poetry.packages]]
 include = "pyppl_report"
 
