@@ -100,7 +100,7 @@ def proc_postrun(proc, status):
     if template_file:
         template = template_file.read_text()
 
-    template = proc.template(template, **proc.envs)
+    template = proc.template(textwrap.dedent(template), **proc.envs)
     rptdata = dict(jobs=[None] * proc.size, proc=proc, args=proc.args)
     for i, job in enumerate(proc.jobs):
         rptdata['jobs'][i] = job.data.job.copy()
