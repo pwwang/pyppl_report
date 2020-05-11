@@ -1,3 +1,6 @@
+## 0.6.1
+- Adopt `PyPPL 3.2.0`
+
 ## 0.6.0
 - Add caching for report generation
 - Rewrite part of the plugin for better theming
