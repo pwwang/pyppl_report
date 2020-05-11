@@ -6,7 +6,7 @@ from pathlib import Path
 import textwrap
 import toml
 from pyppl.plugin import hookimpl
-from pyppl.logger import logger
+from pyppl.logger import Logger
 from pyppl.jobmgr import STATES
 from pyppl.utils import fs, format_secs, filesig
 from pyppl.exception import ProcessAttributeError
@@ -16,6 +16,7 @@ from .report import Report
 
 __version__ = "0.6.0"
 
+logger = Logger(plugin='report') # pylint: disable=invalid-name
 
 def report_template_converter(value):
     """Convert relative path of a template to absolute"""
