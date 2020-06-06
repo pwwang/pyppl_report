@@ -15,7 +15,7 @@ from diot import Diot, OrderedDiot
 from cmdy import CmdyReturnCodeError
 from .report import Report
 
-__version__ = "0.6.1"
+__version__ = "0.6.2"
 
 logger = Logger(plugin='report') # pylint: disable=invalid-name
 
