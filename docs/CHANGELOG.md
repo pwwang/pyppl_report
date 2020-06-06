@@ -1,3 +1,6 @@
+## 0.6.2
+- Adopt latest cmdy
+
 ## 0.6.1
 - Adopt `PyPPL 3.2.0`
 
