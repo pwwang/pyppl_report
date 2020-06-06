@@ -6,8 +6,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 
 @pytest.fixture
-def proc(tmp_path):
-    return Proc(input = {'a:var':[0]}, output = 'a:var:0', ppldir = tmp_path/'workdir').copy()
+def proc(tmp_path, request):
+    return Proc(input = {'a:var':[0]}, output = 'a:var:0', ppldir = tmp_path/'workdir', lang='bash').copy()
 
 @pytest.fixture
 def reportfile(tmp_path):
@@ -20,7 +20,8 @@ def assert_in_file(file, *strings):
         content = content[content.find(string) + len(string):]
 
 def test_basic(proc, reportfile):
-    PyPPL(forks=5).start(proc).run().report(outfile = reportfile)
+    #proc.lang = 'bash'
+    PyPPL(forks=5,logger_level='error').start(proc).run().report(outfile = reportfile)
     assert_in_file(reportfile, 'Reports for ')
 
 def test_nosuch_template(proc, reportfile, tmp_path):

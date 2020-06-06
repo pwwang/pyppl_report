@@ -17,7 +17,7 @@ before_install:
 install:
   - poetry install -v
 script:
-  - pytest tests/ -s
+  - pytest tests/test_report.py tests/test_console.py
 after_success: |
   if [ "$TRAVIS_PYTHON_VERSION" == "3.7" ]; then
     python-codacy-coverage -r .coverage.xml

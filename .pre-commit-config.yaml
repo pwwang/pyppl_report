@@ -78,7 +78,7 @@ repos:
         name: Run pytest
         entry: pytest
         language: system
-        args: [tests/]
+        args: [tests/test_report.py, tests/test_console.py]
         exclude: ^tests/data/test.md$
         pass_filenames: false
         files: ^tests/.+$|^pyppl_report/.+$

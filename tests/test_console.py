@@ -123,4 +123,4 @@ def test_templates(tmp_path):
                template='semantic')
 
     run_report(i = HERE/'../README.md', title='Documentation for pyppl_report',
-               templtae='semantic', toc=0, o = tmp_path/'index.html')
+               template='semantic', toc=0, o = tmp_path/'index.html')

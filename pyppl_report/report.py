@@ -175,13 +175,10 @@ class Report:
         }
         if 'pdf' not in ext:
             kwargs['output'] = self.outfile
-            kwargs['_hold'] = True
-            return pandoc(self.mdfile, **kwargs)
+            return pandoc(self.mdfile, **kwargs).h
 
-        kwargs['_pipe'] = True
-        return pandoc(self.mdfile, **kwargs) | wkhtmltopdf(
-            '-',
+        return pandoc(self.mdfile, **kwargs).p | wkhtmltopdf(
+            "-",
             _=self.outfile,
-            _raise=True,
-            _hold=True
-        )
+            _raise=True
+        ).h

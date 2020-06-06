@@ -8,15 +8,19 @@ import toml
 from pyppl.plugin import hookimpl
 from pyppl.logger import Logger
 from pyppl.jobmgr import STATES
+from pyppl.config import config
 from pyppl.utils import fs, format_secs, filesig
 from pyppl.exception import ProcessAttributeError
 from diot import Diot, OrderedDiot
-from cmdy import CmdyReturnCodeException
+from cmdy import CmdyReturnCodeError
 from .report import Report
 
 __version__ = "0.6.1"
 
 logger = Logger(plugin='report') # pylint: disable=invalid-name
+
+config.config.report_template = ''
+config.config.report_envs = Diot(level=1, pre='', post='')
 
 def report_template_converter(value):
     """Convert relative path of a template to absolute"""
@@ -39,14 +43,6 @@ def report_template_converter(value):
                 'Report template file does not exist: %s' % scriptpath)
         return "file:%s" % scriptpath
     return value
-
-
-@hookimpl
-def setup(config):
-    """Setup the plugin"""
-    config.config.report_template = ''
-    config.config.report_envs = Diot(level=1, pre='', post='')
-
 
 @hookimpl
 def logger_init(logger):  # pylint: disable=redefined-outer-name
@@ -192,11 +188,11 @@ def report(ppl, # pylint: disable=too-many-arguments
                                                        filters,
                                                        toc)
         try:
-            logger.debug('Running: ' + cmd.cmd)
-            cmd.run()
+            logger.debug('Running: ' + cmd.strcmd)
+            cmd.run(wait=True)
             logger.report('Report generated: %s', outfile)
             logger.report('Time elapsed: %s', format_secs(time() - timer))
-        except CmdyReturnCodeException as ex:
+        except CmdyReturnCodeError as ex:
             ex = str(ex)
             if 'Stack space overflow' not in ex:
                 logger.error(str(ex))
@@ -213,7 +209,7 @@ def report(ppl, # pylint: disable=too-many-arguments
                 cmd.run()
                 logger.report('Report generated: %s', outfile)
                 logger.report('Time elapsed: %s', format_secs(time() - timer))
-            except CmdyReturnCodeException as ex2:
+            except CmdyReturnCodeError as ex2:
                 logger.error(str(ex2))
                 sys.exit(1)
 
@@ -268,10 +264,11 @@ def cli_execcmd(command, opts):
         cmd = Report(opts.i, opts.o,
                      opts.title).generate(not opts.nonstand, opts.template,
                                           opts.filter, opts.toc)
+
         try:
-            logger.info('Running: ' + cmd.pipedcmd)
-            cmd.run()
+            logger.info('Running: ' + ' | '.join(cmd.piped_strcmds))
+            cmd.run(wait=True)
             logger.info('Report generated: ' + str(opts.o))
-        except CmdyReturnCodeException as ex:
+        except CmdyReturnCodeError as ex:
             logger.error(str(ex))
             sys.exit(1)
